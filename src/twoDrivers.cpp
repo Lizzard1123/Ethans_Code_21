@@ -1,4 +1,4 @@
-#if 1
+#if 0
 #include "custom/robot.h"
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -33,31 +33,19 @@ void opcontrol()
         Bongo.tylerControl();
         // catie control
         //Bongo.catieControl();
-        
-        //Left wing
-        if(master.get_digital(E_CONTROLLER_DIGITAL_L1)){ //tilt up
-            Bongo.Wings.tiltLeftWing(Bongo.Wings.speedMedium);
-        } else if(master.get_digital(E_CONTROLLER_DIGITAL_L2)){ //tilt down
-            Bongo.Wings.tiltLeftWing(-Bongo.Wings.speedMedium);
-        } else { //stops left wing motor
-            Bongo.Wings.stopLeft();
-        }
-        //right wing
-        if(master.get_digital(E_CONTROLLER_DIGITAL_R1)){ //tilt up
-            Bongo.Wings.tiltRightWing(Bongo.Wings.speedMedium);
-        } else if(master.get_digital(E_CONTROLLER_DIGITAL_R2)){ //tilt down
-            Bongo.Wings.tiltRightWing(-Bongo.Wings.speedMedium);
-        } else { //stops left wing motor
-            Bongo.Wings.stopRight();
-        }
+
+        Bongo.Wings.tiltLeftWing(partner.get_analog(E_CONTROLLER_ANALOG_LEFT_X));
+        Bongo.Wings.tiltRightWing(partner.get_analog(E_CONTROLLER_ANALOG_RIGHT_X));
+
         //back wing
-        if(master.get_digital(E_CONTROLLER_DIGITAL_X)){ //tilt up
+        if(partner.get_digital(E_CONTROLLER_DIGITAL_UP)){ //tilt up
             Bongo.Tail.tiltTail(Bongo.Tail.speedMedium);
-        } else if(master.get_digital(E_CONTROLLER_DIGITAL_B)){ //tilt down
+        } else if(partner.get_digital(E_CONTROLLER_DIGITAL_DOWN)){ //tilt down
             Bongo.Tail.tiltTail(-Bongo.Tail.speedMedium);
         } else { //stops left wing motor
             Bongo.Tail.stopAll();
         }
+
         //locks
         if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_LEFT)){
             Bongo.Wings.toggleLeftLock();
@@ -66,15 +54,26 @@ void opcontrol()
         } else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)){
             Bongo.Tail.toggleLock();
         }
+
         //lift control
         if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_Y)){
             Bongo.Intake.toggle();
         }
-        if(master.get_digital(E_CONTROLLER_DIGITAL_A)){
+        if(partner.get_digital(E_CONTROLLER_DIGITAL_X)){
             Bongo.Intake.setSpeed(Bongo.Intake.liftSpeedHigh);
         } else {
             Bongo.Intake.setSpeed(Bongo.Intake.liftSpeedLow);
         }
+
+        //lining up with mogo
+        if(partner.get_digital(E_CONTROLLER_DIGITAL_Y)){
+            Bongo.lineUpMogo(LeftSideNum);
+        } else if(partner.get_digital(E_CONTROLLER_DIGITAL_B)){
+            Bongo.lineUpMogo(BackSideNum);
+        } else if(partner.get_digital(E_CONTROLLER_DIGITAL_A)){
+            Bongo.lineUpMogo(RightSideNum);
+        }
+
         // starts the spin on motors or cuts power
         Bongo.Movement.move();
         //delay between updates

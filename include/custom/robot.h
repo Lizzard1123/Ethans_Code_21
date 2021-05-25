@@ -1,6 +1,8 @@
 #ifndef ROBOT
 #define ROBOT
-
+#include "intake.h"
+#include "wings.h"
+#include "tail.h"
 #include "movement.h"
 #include "auton.h"
 #include <climits>
@@ -40,6 +42,9 @@ private:
 
 public:
     /*robot subsytems*/
+    IntakeClass Intake;
+    WingClass Wings;
+    TailClass Tail;
     // class handler for movement + other funtions
     static RobotMovement Movement;
     //Auton funtions
@@ -580,8 +585,8 @@ public:
         //objects on right will require motors to move in opposite direction of left and back
         int rotationMultiplier;
         switch (sideNum)
-        {
-        case leftSideNum:
+        { //TODO fix this rotation multiplier idk which is which
+        case LeftSideNum:
             mogo = leftEye.get_by_sig(0, MOGO_CUSTOM_YELLOW_NUM);
             rotationMultiplier = 1;
             break;

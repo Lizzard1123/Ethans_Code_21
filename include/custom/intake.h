@@ -1,54 +1,63 @@
 #ifndef INTAKE
 #define INTAKE
 #include "math.h"
-class uptakeClass {
+class IntakeClass
+{
 private:
-
-  int liftspeed = 100;
-  bool toggled  = false;
-  bool isflush  = false;
-
-public:
-
+  double liftspeed = 40;
+  bool toggled = false;
+  
+public:  
   Math myMath;
-  void stopBoth() {
+  double liftSpeedLow = 40;
+  double liftSpeedHigh = 100;
+
+  //stops motor
+  void stop()
+  {
     Lift.move_velocity(0);
   }
 
-  void update() {
-    if (toggled && !isflush) {
+  void update()
+  {
+    if (toggled)
+    {
       Lift.move_velocity(myMath.toRPM(true, liftspeed, Lift.get_gearing()));
-    } else if (isflush) {
-      printf("g;ish");
-      Lift.move_velocity(myMath.toRPM(false, liftspeed, Lift.get_gearing()));
-    } else {
-      stopBoth();
+    }
+    else
+    {
+      stop();
     }
   }
 
-  void setToggle(bool setting) {
-    toggled = setting;
-  }
-
-  void toggle() {
-    toggled = !toggled;
-  }
-
-  bool getToggle() {
+  //get toggled state of lift
+  bool getToggle()
+  {
     return toggled;
   }
 
-  int getSpeed(){
+  //set toggled state of lift
+  void setToggle(bool setting)
+  {
+    toggled = setting;
+  }
+
+  //toggle lift
+  void toggle()
+  {
+    toggled = !toggled;
+  }
+
+  //returns speed of lift
+  double getSpeed()
+  {
     return liftspeed;
   }
 
   // sets flush
-  void setSpeed(double setting) {
+  void setSpeed(double setting)
+  {
     liftspeed = setting;
-  }
-
-  void flush(bool setting) {
-    isflush = setting;
   }
 };
 #endif // ifndef INTAKE

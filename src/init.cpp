@@ -40,6 +40,10 @@ lv_obj_t *bigBox = lv_btn_create(scrAuton, NULL);
 
 lv_obj_t *bigBoxLabel = lv_label_create(bigBox, NULL);
 
+lv_obj_t *bigerBox = lv_btn_create(scrAuton, NULL);
+
+lv_obj_t *bigerBoxLabel = lv_label_create(bigerBox, NULL);
+
 lv_obj_t *scrConf = lv_obj_create(NULL, NULL);
 
 lv_obj_t *topBox = lv_btn_create(scrColor, NULL);
@@ -373,6 +377,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn)
         lv_label_set_text(smallBoxLabel, "   SMALL \n(SELECTED)");
         lv_label_set_text(medBoxLabel, "MED");
         lv_label_set_text(bigBoxLabel, "BIG");
+        lv_label_set_text(bigBoxLabel, "BIGER");
         delay(interval);
         current++;
         loadScreen();
@@ -384,6 +389,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn)
         lv_label_set_text(medBoxLabel, "    MED \n(SELECTED)");
         lv_label_set_text(smallBoxLabel, "SMALL");
         lv_label_set_text(bigBoxLabel, "BIG");
+        lv_label_set_text(bigBoxLabel, "BIGER");
         delay(interval);
         current++;
         loadScreen();
@@ -393,6 +399,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn)
         autonSelected = true;
         Bongo.setAutonNum(3);
         lv_label_set_text(bigBoxLabel, "     BIG \n(SELECTED)");
+        lv_label_set_text(bigBoxLabel, "BIGER");
         lv_label_set_text(medBoxLabel, "MED");
         lv_label_set_text(smallBoxLabel, "SMALL");
         delay(interval);
@@ -400,8 +407,16 @@ static lv_res_t btn_click_action(lv_obj_t *btn)
         loadScreen();
         break;
 
-    case 8: //
-
+    case 8: //biger auton btn
+        autonSelected = true;
+        Bongo.setAutonNum(4);
+        lv_label_set_text(bigerBoxLabel, "    BIGER \n(SELECTED)");
+        lv_label_set_text(bigBoxLabel, "BIG");
+        lv_label_set_text(medBoxLabel, "MED");
+        lv_label_set_text(smallBoxLabel, "SMALL");
+        delay(interval);
+        current++;
+        loadScreen();
         break;
 
     case 9: // red button
@@ -588,8 +603,23 @@ void initAuton()
     lv_style_copy(&bigBoxStylePR, &autonBoxStyle);
     bigBoxStylePR.body.main_color = LV_COLOR_MAKE(0xab, 0x00, 0x00);
     bigBoxStylePR.body.grad_color = LV_COLOR_MAKE(0xab, 0x00, 0x00);
+    static lv_style_t bigerBoxStyle;
+    lv_style_copy(&bigerBoxStyle, &autonBoxStyle);
+    bigerBoxStyle.body.main_color = LV_COLOR_MAKE(0xf7, 0x00, 0xce);
+    bigerBoxStyle.body.grad_color = LV_COLOR_MAKE(0xf7, 0x00, 0xce);
+    static lv_style_t bigerBoxStylePR;
+    lv_style_copy(&bigerBoxStylePR, &autonBoxStyle);
+    bigerBoxStylePR.body.main_color = LV_COLOR_MAKE(0x96, 0x00, 0x7d);
+    bigerBoxStylePR.body.grad_color = LV_COLOR_MAKE(0x96, 0x00, 0x7d);
 
-    setupButton(smallBox, 5, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, (LV_HOR_RES / 4) + offset, offset);
+    //TODO if the auton code picker is wacky then this is where you fix it
+
+    //side bar size of menu while selecting
+    int sideBarSize = (LV_HOR_RES / 4) + offset;
+    //the rest of the space on the right of the nav menu
+    int autonBoxSize = (3 * LV_HOR_RES / 4) / 4;
+    //only change the sidebar size : 2nd to last parameter
+    setupButton(smallBox, 5, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize, offset);
 
     // redBoxStyle, redBoxStylePR
     lv_btn_set_style(smallBox, LV_BTN_STYLE_REL, &smallBoxStyle);
@@ -597,7 +627,7 @@ void initAuton()
 
     lv_label_set_text(smallBoxLabel, "SMALL");
 
-    setupButton(medBox, 6, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, (LV_HOR_RES / 2) + offset, offset);
+    setupButton(medBox, 6, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize + autonBoxSize, offset);
 
     // blueBoxStyle, blueBoxStylePR,
     lv_btn_set_style(medBox, LV_BTN_STYLE_REL, &medBoxStyle);
@@ -605,13 +635,21 @@ void initAuton()
 
     lv_label_set_text(medBoxLabel, "MED");
 
-    setupButton(bigBox, 7, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, (3 * LV_HOR_RES / 4) + offset, offset);
+    setupButton(bigBox, 7, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize + 2 * autonBoxSize, offset);
 
     // blueBoxStyle, blueBoxStylePR,
     lv_btn_set_style(bigBox, LV_BTN_STYLE_REL, &bigBoxStyle);
     lv_btn_set_style(bigBox, LV_BTN_STYLE_PR, &bigBoxStylePR);
 
     lv_label_set_text(bigBoxLabel, "BIG");
+
+    setupButton(bigerBox, 8, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize + 3 * autonBoxSize, offset);
+
+    // blueBoxStyle, blueBoxStylePR,
+    lv_btn_set_style(bigerBox, LV_BTN_STYLE_REL, &bigerBoxStyle);
+    lv_btn_set_style(bigerBox, LV_BTN_STYLE_PR, &bigerBoxStylePR);
+
+    lv_label_set_text(bigerBoxLabel, "BIGER");
 }
 
 void initSideBar()
@@ -933,7 +971,7 @@ void initialize()
     //printf("Init pot \n");
     //delay(250); idk about this delay
 
-    //break modes for all motors
+    //TODO set break modes for all motors
     /*
         E_MOTOR_BRAKE_BRAKE
         E_MOTOR_BRAKE_COAST
@@ -943,6 +981,10 @@ void initialize()
     FR.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
     BL.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
     BR.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
+    Lift.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
+    LeftWing.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    RightWing.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    BackWing.set_brake_mode(E_MOTOR_BRAKE_HOLD);
     
     //optical sensor led light level 100 high
     //outtakeSense.set_led_pwm(100);
