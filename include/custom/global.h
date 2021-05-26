@@ -62,7 +62,7 @@ extern ADIAnalogOut rightLock;
 extern ADIAnalogOut backLock;
 
 //limit switch / button
-extern ADIAnalogIn tailSensor;
+extern ADIDigitalIn tailSensor;
 
 //Odom
 extern okapi::ADIEncoder  leftOdom;
