@@ -1,4 +1,4 @@
-#if 0
+#if 1
 #include "custom/robot.h"
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -17,7 +17,8 @@
 void opcontrol()
 {
     //space to run stuff once before begin driving
-
+    master.print(1, 1, "Master");
+    partner.print(1, 1, "Partner");
     while (true)
     {
         //prints to screen the position and rotation of bongo

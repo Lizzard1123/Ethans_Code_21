@@ -1,4 +1,4 @@
-#if 1
+#if 0
 #include "custom/robot.h"
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -33,7 +33,7 @@ void opcontrol()
         Bongo.tylerControl();
         // catie control
         //Bongo.catieControl();
-        
+
         //Left wing
         if(master.get_digital(E_CONTROLLER_DIGITAL_L1)){ //tilt up
             Bongo.Wings.tiltLeftWing(Bongo.Wings.speedMedium);
