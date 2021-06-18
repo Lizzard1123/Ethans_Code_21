@@ -49,6 +49,9 @@ okapi::ADIEncoder  middleOdom('c', 'd', true);
 
 // Staic defines
 RobotMovement Robot::Movement;
+IntakeClass Robot::Intake;
+WingClass Robot::Wings;
+TailClass Robot::Tail;
 Math Robot::myMath;
 bool Robot::teamIsBlue = false;
 const double Robot::posDelay = 20;

@@ -1,4 +1,4 @@
-#if 0
+#if 1
 #include "custom/robot.h"
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -17,17 +17,29 @@
 void opcontrol()
 {
     //space to run stuff once before begin driving
-
+    // change teams failsafe
+    if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_A))
+    {
+        Bongo.changeTeam();
+    }
+    
+    //toggle intake
+    if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_Y)){
+        Bongo.Intake.toggle();
+    }
+    
+    //locks
+    if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_LEFT)){
+        Bongo.Wings.toggleLeftLock();
+    } else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_RIGHT)){
+        Bongo.Wings.toggleRightLock();
+    } else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)){
+        Bongo.Tail.toggleLock();
+    }
     while (true)
     {
         //prints to screen the position and rotation of bongo
         Bongo.debugPos();
-
-        // change teams failsafe
-        if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_A))
-        {
-            Bongo.changeTeam();
-        }
 
         // tyler control
         Bongo.tylerControl();
@@ -58,18 +70,8 @@ void opcontrol()
         } else { //stops left wing motor
             Bongo.Tail.stopAll();
         }
-        //locks
-        if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_LEFT)){
-            Bongo.Wings.toggleLeftLock();
-        } else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_RIGHT)){
-            Bongo.Wings.toggleRightLock();
-        } else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_DOWN)){
-            Bongo.Tail.toggleLock();
-        }
+        
         //lift control
-        if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_Y)){
-            Bongo.Intake.toggle();
-        }
         if(master.get_digital(E_CONTROLLER_DIGITAL_A)){
             Bongo.Intake.setSpeed(Bongo.Intake.liftSpeedHigh);
         } else {

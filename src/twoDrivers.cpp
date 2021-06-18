@@ -1,4 +1,4 @@
-#if 1
+#if 0
 #include "custom/robot.h"
 /**
  * Runs the operator control code. This function will be started in its own task

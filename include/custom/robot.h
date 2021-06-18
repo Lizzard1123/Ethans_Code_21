@@ -42,9 +42,9 @@ private:
 
 public:
     /*robot subsytems*/
-    IntakeClass Intake;
-    WingClass Wings;
-    TailClass Tail;
+    static IntakeClass Intake;
+    static WingClass Wings;
+    static TailClass Tail;
     // class handler for movement + other funtions
     static RobotMovement Movement;
     //Auton funtions
@@ -550,6 +550,9 @@ public:
         while (true)
         {
             //update subsystem motors in their methods respectivley 
+            Intake.update();
+            Wings.update();
+            Tail.update();
             c::task_delay(10);
         }
     }
@@ -563,17 +566,12 @@ public:
     //starts up threads
     void initThreads()
     {
-        // control updates from intake uptake flywheel
-        //Task control(updateEverything, nullptr, TASK_PRIORITY_DEFAULT,
-        //             TASK_STACK_DEPTH_DEFAULT, "control");
-
+        // control updates from intake wings tail
+        Task control(updateEverything, nullptr, TASK_PRIORITY_DEFAULT,
+                     TASK_STACK_DEPTH_DEFAULT, "control");
         // track location
         Task updatePosition(updatePos, nullptr, TASK_PRIORITY_DEFAULT,
                             TASK_STACK_DEPTH_DEFAULT, "updatePos");
-
-        //handler for outakepros
-        //Task sort(handleOutake, nullptr, TASK_PRIORITY_DEFAULT,
-        //          TASK_STACK_DEPTH_DEFAULT, "sort");
         initz = true;
     }
 
