@@ -229,12 +229,10 @@ void updateConf()
     }
     if (autonSelected)
     {
-        bool isOne = Bongo.getAutonNum() == 1;
-        bool isTwo = Bongo.getAutonNum() == 2;
-        lv_label_set_text(infoBoxLabel3, isOne ? "Small" : isTwo == 2 ? "Med"
-                                                                      : "Big");
-        if (isOne)
+        switch (Bongo.getAutonNum())
         {
+        case 1:
+            lv_label_set_text(infoBoxLabel3, "Small");
             static lv_style_t infoThreeSmall;
             lv_style_copy(&infoThreeSmall, &lv_style_plain);
             infoThreeSmall.text.color = LV_COLOR_MAKE(0x00, 0x00, 0x00);
@@ -243,9 +241,9 @@ void updateConf()
             infoThreeSmall.body.main_color = LV_COLOR_MAKE(0xbf, 0xbf, 0x00);
             infoThreeSmall.body.grad_color = LV_COLOR_MAKE(0xbf, 0xbf, 0x00);
             lv_obj_set_style(infoBox3, &infoThreeSmall);
-        }
-        else if (isTwo)
-        {
+            break;
+        case 2:
+            lv_label_set_text(infoBoxLabel3, "Med");
             static lv_style_t infoThreeMed;
             lv_style_copy(&infoThreeMed, &lv_style_plain);
             infoThreeMed.text.color = LV_COLOR_MAKE(0x00, 0x00, 0x00);
@@ -254,9 +252,9 @@ void updateConf()
             infoThreeMed.body.main_color = LV_COLOR_MAKE(0xc2, 0x4a, 0x00);
             infoThreeMed.body.grad_color = LV_COLOR_MAKE(0xc2, 0x4a, 0x00);
             lv_obj_set_style(infoBox3, &infoThreeMed);
-        }
-        else
-        {
+            break;
+        case 3:
+            lv_label_set_text(infoBoxLabel3, "Big");
             static lv_style_t infoThreeBig;
             lv_style_copy(&infoThreeBig, &lv_style_plain);
             infoThreeBig.text.color = LV_COLOR_MAKE(0x00, 0x00, 0x00);
@@ -265,6 +263,18 @@ void updateConf()
             infoThreeBig.body.main_color = LV_COLOR_MAKE(0xc4, 0x00, 0x00);
             infoThreeBig.body.grad_color = LV_COLOR_MAKE(0xc4, 0x00, 0x00);
             lv_obj_set_style(infoBox3, &infoThreeBig);
+            break;
+        case 4:
+            lv_label_set_text(infoBoxLabel3, "BIGGER!");
+            static lv_style_t infoThreeBiger;
+            lv_style_copy(&infoThreeBiger, &lv_style_plain);
+            infoThreeBiger.text.color = LV_COLOR_MAKE(0x00, 0x00, 0x00);
+            infoThreeBiger.body.border.width = 5;
+            infoThreeBiger.body.border.color = LV_COLOR_MAKE(0x00, 0x00, 0x00);
+            infoThreeBiger.body.main_color = LV_COLOR_MAKE(0xf7, 0x00, 0xce);
+            infoThreeBiger.body.grad_color = LV_COLOR_MAKE(0xf7, 0x00, 0xce);
+            lv_obj_set_style(infoBox3, &infoThreeBiger);
+            break;
         }
     }
 
@@ -377,7 +387,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn)
         lv_label_set_text(smallBoxLabel, "   SMALL \n(SELECTED)");
         lv_label_set_text(medBoxLabel, "MED");
         lv_label_set_text(bigBoxLabel, "BIG");
-        lv_label_set_text(bigBoxLabel, "BIGER");
+        lv_label_set_text(bigerBoxLabel, "BIGGER");
         delay(interval);
         current++;
         loadScreen();
@@ -389,7 +399,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn)
         lv_label_set_text(medBoxLabel, "    MED \n(SELECTED)");
         lv_label_set_text(smallBoxLabel, "SMALL");
         lv_label_set_text(bigBoxLabel, "BIG");
-        lv_label_set_text(bigBoxLabel, "BIGER");
+        lv_label_set_text(bigerBoxLabel, "BIGGER");
         delay(interval);
         current++;
         loadScreen();
@@ -399,7 +409,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn)
         autonSelected = true;
         Bongo.setAutonNum(3);
         lv_label_set_text(bigBoxLabel, "     BIG \n(SELECTED)");
-        lv_label_set_text(bigBoxLabel, "BIGER");
+        lv_label_set_text(bigerBoxLabel, "BIGGER");
         lv_label_set_text(medBoxLabel, "MED");
         lv_label_set_text(smallBoxLabel, "SMALL");
         delay(interval);
@@ -410,7 +420,7 @@ static lv_res_t btn_click_action(lv_obj_t *btn)
     case 8: //biger auton btn
         autonSelected = true;
         Bongo.setAutonNum(4);
-        lv_label_set_text(bigerBoxLabel, "    BIGER \n(SELECTED)");
+        lv_label_set_text(bigerBoxLabel, "    BIGGER \n(SELECTED)");
         lv_label_set_text(bigBoxLabel, "BIG");
         lv_label_set_text(medBoxLabel, "MED");
         lv_label_set_text(smallBoxLabel, "SMALL");
@@ -619,7 +629,7 @@ void initAuton()
     //the rest of the space on the right of the nav menu
     int autonBoxSize = (3 * LV_HOR_RES / 4) / 4;
     //only change the sidebar size : 2nd to last parameter
-    setupButton(smallBox, 5, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize, offset);
+    setupButton(smallBox, 5, (LV_HOR_RES / 4) - 8 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize, offset);
 
     // redBoxStyle, redBoxStylePR
     lv_btn_set_style(smallBox, LV_BTN_STYLE_REL, &smallBoxStyle);
@@ -627,7 +637,7 @@ void initAuton()
 
     lv_label_set_text(smallBoxLabel, "SMALL");
 
-    setupButton(medBox, 6, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize + autonBoxSize, offset);
+    setupButton(medBox, 6, (LV_HOR_RES / 4) - 8 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize + autonBoxSize, offset);
 
     // blueBoxStyle, blueBoxStylePR,
     lv_btn_set_style(medBox, LV_BTN_STYLE_REL, &medBoxStyle);
@@ -635,7 +645,7 @@ void initAuton()
 
     lv_label_set_text(medBoxLabel, "MED");
 
-    setupButton(bigBox, 7, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize + 2 * autonBoxSize, offset);
+    setupButton(bigBox, 7, (LV_HOR_RES / 4) - 8 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize + 2 * autonBoxSize, offset);
 
     // blueBoxStyle, blueBoxStylePR,
     lv_btn_set_style(bigBox, LV_BTN_STYLE_REL, &bigBoxStyle);
@@ -643,13 +653,13 @@ void initAuton()
 
     lv_label_set_text(bigBoxLabel, "BIG");
 
-    setupButton(bigerBox, 8, (LV_HOR_RES / 4) - 2 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize + 3 * autonBoxSize, offset);
+    setupButton(bigerBox, 8, (LV_HOR_RES / 4) - 8 * offset, LV_VER_RES - 2 * offset, 5, sideBarSize + 3 * autonBoxSize, offset);
 
     // blueBoxStyle, blueBoxStylePR,
     lv_btn_set_style(bigerBox, LV_BTN_STYLE_REL, &bigerBoxStyle);
     lv_btn_set_style(bigerBox, LV_BTN_STYLE_PR, &bigerBoxStylePR);
 
-    lv_label_set_text(bigerBoxLabel, "BIGER");
+    lv_label_set_text(bigerBoxLabel, "BIGGER");
 }
 
 void initSideBar()
@@ -966,7 +976,7 @@ void initialize()
     Bongo.initThreads();
     //starts, paints, and loads auton selector and all of screen displays
     initAllScreens();
-    //calibrate potentiometer if used 
+    //calibrate potentiometer if used
     //rightArm.calibrate();
     //printf("Init pot \n");
     //delay(250); idk about this delay
@@ -985,7 +995,7 @@ void initialize()
     LeftWing.set_brake_mode(E_MOTOR_BRAKE_HOLD);
     RightWing.set_brake_mode(E_MOTOR_BRAKE_HOLD);
     BackWing.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-    
+
     //optical sensor led light level 100 high
     //outtakeSense.set_led_pwm(100);
 
@@ -995,7 +1005,6 @@ void initialize()
     rightEye.set_signature(MOGO_CUSTOM_YELLOW_NUM, &MOGO_CUSTOM_YELLOW);
     backEye.set_signature(MOGO_CUSTOM_YELLOW_NUM, &MOGO_CUSTOM_YELLOW);
 }
-
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
