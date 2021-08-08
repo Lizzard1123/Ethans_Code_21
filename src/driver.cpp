@@ -52,7 +52,7 @@ void opcontrol()
         } else if(master.get_digital(E_CONTROLLER_DIGITAL_L2)){ //tilt down
             Bongo.Wings.tiltLeftWing(-Bongo.Wings.speedMedium);
         } else { //stops left wing motor
-            Bongo.Wings.stopLeft();
+            Bongo.Wings.tiltRightWing(0);
         }
         //right wing
         if(master.get_digital(E_CONTROLLER_DIGITAL_R1)){ //tilt up
@@ -60,7 +60,7 @@ void opcontrol()
         } else if(master.get_digital(E_CONTROLLER_DIGITAL_R2)){ //tilt down
             Bongo.Wings.tiltRightWing(-Bongo.Wings.speedMedium);
         } else { //stops left wing motor
-            Bongo.Wings.stopRight();
+            Bongo.Wings.tiltRightWing(0);
         }
         //back wing
         if(master.get_digital(E_CONTROLLER_DIGITAL_X)){ //tilt up
@@ -68,7 +68,7 @@ void opcontrol()
         } else if(master.get_digital(E_CONTROLLER_DIGITAL_B)){ //tilt down
             Bongo.Tail.tiltTail(-Bongo.Tail.speedMedium);
         } else { //stops left wing motor
-            Bongo.Tail.stopAll();
+            Bongo.Tail.tiltTail(0);
         }
         
         //lift control
