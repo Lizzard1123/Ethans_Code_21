@@ -78,6 +78,17 @@ void opcontrol()
             Bongo.Intake.setSpeed(Bongo.Intake.liftSpeedLow);
         }
         // starts the spin on motors or cuts power
+        //debug
+        if(master.get_digital(E_CONTROLLER_DIGITAL_A)){
+            Bongo.resetOdom();
+        }
+        Bongo.debugPos();
+        if(master.get_digital(E_CONTROLLER_DIGITAL_B)){
+            Bongo.testOdom2();
+        }
+        if(master.get_digital(E_CONTROLLER_DIGITAL_Y)){
+            Bongo.testOdom();
+        }
         Bongo.Movement.move();
         //delay between updates
         delay(20);

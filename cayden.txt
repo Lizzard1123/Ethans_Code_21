@@ -1,5 +1,0 @@
-TODO list
--download TODO extension by gruntfuggly
-    >this will show you all of the TODOs in the code and instructions on how to get them fixed for bongo to run properly
--default is one driver
-    >If you want to switch to two driver, switch the 1 and 0 in defined ifs at the beginning of the two driver files 

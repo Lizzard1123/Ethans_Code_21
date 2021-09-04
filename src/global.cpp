@@ -43,9 +43,9 @@ ADIDigitalIn tailSensor(tailSensorPort);
 //ADIAnalogIn rightArm(8);
 
 // Odom
-okapi::ADIEncoder  leftOdom('e', 'f', false);
-okapi::ADIEncoder  rightOdom('a', 'b', false);
-okapi::ADIEncoder  middleOdom('c', 'd', true);
+okapi::ADIEncoder  leftOdom('a', 'b', true);
+okapi::ADIEncoder  rightOdom('g', 'h', false);
+okapi::ADIEncoder  middleOdom('e', 'f', true);
 
 // Staic defines
 RobotMovement Robot::Movement;
@@ -54,7 +54,7 @@ WingClass Robot::Wings;
 TailClass Robot::Tail;
 Math Robot::myMath;
 bool Robot::teamIsBlue = false;
-const double Robot::posDelay = 20;
+const double Robot::posDelay = 50;
 double Robot::X = 0;
 double Robot::Y = 0;
 double Robot::rotation = 0;

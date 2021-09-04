@@ -221,5 +221,15 @@ public:
     return (av - part) * headingScale;
   }
 
+  double maxSpeed(double speed, double max){
+    if(speed <= 0){
+      if(speed < -max){
+        return -max;
+      }
+      return speed;
+    }
+    return speed > max? max : speed;
+  }
+
 };
 #endif // ifndef MATH

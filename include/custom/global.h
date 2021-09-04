@@ -4,12 +4,12 @@
 //motor ports
 #define FLPort 18 
 #define FRPort 12
-#define BLPort 20
+#define BLPort 10
 #define BRPort 2 
-#define LiftPort 10 //TODO assign port
-#define LeftWingPort 11 //TODO assign port
-#define RightWingPort 19 //TODO assign port
-#define BackWingPort 1 //TODO assign port
+#define LiftPort 99 //TODO assign port
+#define LeftWingPort 99 //TODO assign port
+#define RightWingPort 99 //TODO assign port
+#define BackWingPort 99 //TODO assign port
 #define leftEyePort 99 //TODO assign port
 #define rightEyePort 99 //TODO assign port
 #define backEyePort 99 //TODO assign port
