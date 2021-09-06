@@ -17,8 +17,8 @@
 void opcontrol()
 {
     //space to run stuff once before begin driving
-    master.print(1, 1, "Master");
-    partner.print(1, 1, "Partner");
+    master.print(1, 1, "Player 1");
+    partner.print(1, 1, "Player 2");
     while (true)
     {
         //prints to screen the position and rotation of bongo
@@ -43,16 +43,6 @@ void opcontrol()
             Bongo.Wings.toggleLeftLock();
         } else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_RIGHT)){
             Bongo.Wings.toggleRightLock();
-        }
-
-        //lift control
-        if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_Y)){
-            Bongo.Intake.toggle();
-        }
-        if(partner.get_digital(E_CONTROLLER_DIGITAL_X)){
-            Bongo.Intake.setSpeed(Bongo.Intake.liftSpeedHigh);
-        } else {
-            Bongo.Intake.setSpeed(Bongo.Intake.liftSpeedLow);
         }
 
         //lining up with mogo

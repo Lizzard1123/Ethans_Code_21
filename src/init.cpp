@@ -977,7 +977,7 @@ void initialize()
     //starts, paints, and loads auton selector and all of screen displays
     initAllScreens();
     //calibrate potentiometer if used
-    //rightArm.calibrate();
+    liftPot.calibrate();
     //printf("Init pot \n");
     //delay(250); idk about this delay
 
@@ -991,10 +991,11 @@ void initialize()
     FR.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
     BL.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
     BR.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
-    Lift.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
     LeftWing.set_brake_mode(E_MOTOR_BRAKE_HOLD);
     RightWing.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-    BackWing.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    Yarm.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    Xarm.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+    
 
     //optical sensor led light level 100 high
     //outtakeSense.set_led_pwm(100);

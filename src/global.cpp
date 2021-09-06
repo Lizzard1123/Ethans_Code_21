@@ -7,10 +7,10 @@ Motor FL(FLPort, E_MOTOR_GEARSET_18, false, E_MOTOR_ENCODER_DEGREES);
 Motor FR(FRPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES);
 Motor BL(BLPort, E_MOTOR_GEARSET_18, false, E_MOTOR_ENCODER_DEGREES);
 Motor BR(BRPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES);
-Motor Lift(LiftPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES); 
-Motor LeftWing(LeftWingPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES); 
-Motor RightWing(RightWingPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES); 
-Motor BackWing(BackWingPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES); 
+Motor Yarm(YarmPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES); 
+Motor Xarm(XarmPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES); 
+Motor LeftWing(LeftWingPort, E_MOTOR_GEARSET_36, true, E_MOTOR_ENCODER_DEGREES); 
+Motor RightWing(RightWingPort, E_MOTOR_GEARSET_36, true, E_MOTOR_ENCODER_DEGREES); 
 
 
 // controllers
@@ -34,13 +34,12 @@ vision_signature_s_t MOGO_CUSTOM_YELLOW = Vision::signature_from_utility(MOGO_CU
 //ADIDigitalOut led('F', 1);
 ADIAnalogOut leftLock ({{expanderPort, leftLockPort}});
 ADIAnalogOut rightLock ({{expanderPort, rightLockPort}});
-ADIAnalogOut backLock ({{expanderPort, backLockPort}});
 
 //button / limit switch
-ADIDigitalIn tailSensor(tailSensorPort);
+//ADIDigitalIn tailSensor(tailSensorPort);
 
 //pots
-//ADIAnalogIn rightArm(8);
+ADIAnalogIn liftPot(8);
 
 // Odom
 okapi::ADIEncoder  leftOdom('a', 'b', true);
@@ -49,9 +48,8 @@ okapi::ADIEncoder  middleOdom('e', 'f', true);
 
 // Staic defines
 RobotMovement Robot::Movement;
-IntakeClass Robot::Intake;
 WingClass Robot::Wings;
-TailClass Robot::Tail;
+LiftClass Robot::Lift;
 Math Robot::myMath;
 bool Robot::teamIsBlue = false;
 const double Robot::posDelay = 50;

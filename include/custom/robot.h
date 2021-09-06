@@ -1,8 +1,7 @@
 #ifndef ROBOT
 #define ROBOT
-#include "intake.h"
 #include "wings.h"
-#include "tail.h"
+#include "lift.h"
 #include "movement.h"
 #include "auton.h"
 #include <climits>
@@ -53,9 +52,8 @@ private:
 
 public:
     /*robot subsytems*/
-    static IntakeClass Intake;
     static WingClass Wings;
-    static TailClass Tail;
+    static LiftClass Lift;
     // class handler for movement + other funtions
     static RobotMovement Movement;
     //Auton funtions
@@ -487,14 +485,23 @@ public:
     }
 
     //calls upon subsystems and updates them
-    static void updateEverything(void *)
+    static void updateWings(void *)
     {
         while (true)
         {
             //update subsystem motors in their methods respectivley 
-            Intake.update();
             Wings.update();
-            Tail.update();
+            c::task_delay(10);
+        }
+    }
+
+    //calls upon subsystems and updates them
+    static void updateLift(void *)
+    {
+        while (true)
+        {
+            //update subsystem motors in their methods respectivley 
+            Lift.update();
             c::task_delay(10);
         }
     }
@@ -508,10 +515,13 @@ public:
     //starts up threads
     void initThreads()
     {
-        // control updates from intake wings tail
-        Task control(updateEverything, nullptr, TASK_PRIORITY_DEFAULT,
-                     TASK_STACK_DEPTH_DEFAULT, "control");
-        // track location
+        // control updates from Lift
+        Task control(updateLift, nullptr, TASK_PRIORITY_DEFAULT,
+                     TASK_STACK_DEPTH_DEFAULT, "control lift");
+        // control updates from wings
+        Task control(updateWings, nullptr, TASK_PRIORITY_DEFAULT,
+                     TASK_STACK_DEPTH_DEFAULT, "control wings");
+        // track locationFty
         Task updatePosition(updatePos, nullptr, TASK_PRIORITY_DEFAULT,
                             TASK_STACK_DEPTH_DEFAULT, "updatePos");
         initz = true;
