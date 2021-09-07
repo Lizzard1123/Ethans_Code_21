@@ -24,12 +24,6 @@ void opcontrol()
         //prints to screen the position and rotation of bongo
         Bongo.debugPos();
 
-        // change teams failsafe
-        if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_A))
-        {
-            Bongo.changeTeam();
-        }
-
         // tyler control
         Bongo.tylerControl();
         // catie control
@@ -45,14 +39,51 @@ void opcontrol()
             Bongo.Wings.toggleRightLock();
         }
 
-        //lining up with mogo
-        if(partner.get_digital(E_CONTROLLER_DIGITAL_Y)){
-            Bongo.lineUpMogo(LeftSideNum);
-        } else if(partner.get_digital(E_CONTROLLER_DIGITAL_B)){
-            Bongo.lineUpMogo(BackSideNum);
-        } else if(partner.get_digital(E_CONTROLLER_DIGITAL_A)){
-            Bongo.lineUpMogo(RightSideNum);
+        //lift controller updaters
+        Bongo.Lift.setJoystickX(partner.get_analog(E_CONTROLLER_ANALOG_LEFT_X));
+        Bongo.Lift.setJoystickY(partner.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y));
+        Bongo.Lift.handleVals();
+        //Arm interface
+        //emergency stop
+        if(partner.get_digital(DIGITAL_L1) && partner.get_digital(DIGITAL_L2) && 
+            partner.get_digital(DIGITAL_R1) && partner.get_digital(DIGITAL_R2)){
+            Bongo.Lift.toggleEmergencyStop();
         }
+        if(partner.get_digital(DIGITAL_A)){
+            Bongo.Lift.confirmDrop(); //unlocks ring piston and ends user drop command
+        } else if (partner.get_digital(DIGITAL_B)){
+            Bongo.Lift.toggleBigSide(); //toggles the side that the big tower has been locked into
+        } else if (partner.get_digital(DIGITAL_X)){
+            Bongo.Lift.loadRings(); //starts auton load rings
+        } else if (partner.get_digital(DIGITAL_Y)){
+            Bongo.Lift.userDrop(); //starts auton go to position
+        }
+        //manual powering 
+        if (partner.get_digital(DIGITAL_DOWN)){
+            Bongo.Lift.powerLiftDown(); //manually pushes arm down at max torque
+        } else if (partner.get_digital(DIGITAL_UP)){
+            Bongo.Lift.powerLiftUp(); //manually lifts arm with max torque
+        } else {
+            Bongo.Lift.stopPowerLifting(); //stops manual controll
+        }
+
+
+        //Spinning towers 
+        if(partner.get_digital(DIGITAL_A)){
+            //spin wing wheel right forward
+        } else if (partner.get_digital(DIGITAL_A)){
+            //spin wing wheel right reverse
+        } else {
+            //dont spin wing wheel right
+        }
+        if(partner.get_digital(DIGITAL_A)){
+            //spin wing wheel left forward
+        } else if (partner.get_digital(DIGITAL_A)){
+            //spin wing wheel left reverse
+        } else {
+            //dont spin wing wheel left
+        }
+
 
         // starts the spin on motors or cuts power
         Bongo.Movement.move();

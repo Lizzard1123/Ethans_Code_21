@@ -5,21 +5,30 @@ class LiftClass
 {
 private:
     double maxLiftSpeed = 100;
+    double torqueSpeed = 50;
     double PIDdelay = 10;
     bool emergencyStop = false;
     bool bigTowerIsOnLeft = true;
+    bool manualControl = false;
+    bool turnOffManualControl = false;
     //update bools
     bool autonLoadRings;
+    bool autonUserDrop;
+    int autonUserDropLevel = 0;
+    bool autonUserDropSideLeft = true;
     // Screen/Interface stuff 
     Controller outputController = partner; 
     bool autonMoving = false;
     bool confirmState = false;
+    double previousJoystickX = 0;
+    double previousJoystickY = 0;
+    double currentJoystickX = 0;
+    double currentJoystickY = 0;
     double tweakSpeedDial = 4;
     //X arm PID
     double XPval = 1;
     double XIval = 0;
     double XDval = 0;
-    double Xerror;
     double XlastError = 0;
     double Xtotal = 0;
     double Xtolerance = 1;
@@ -27,7 +36,6 @@ private:
     double YPval = 1;
     double YIval = 0;
     double YDval = 0;
-    double Yerror;
     double YlastError = 0;
     double Ytotal = 0;
     double Ytolerance = 1;
@@ -45,7 +53,6 @@ private:
     double Ysmall;
 public:
     Math myMath;
-    double torqueSpeed = 50;
     //stops motor
     void stopAll()
     {
@@ -61,8 +68,8 @@ public:
         Yarm.move_velocity(0);
     }
 
-    bool PIDMoveXarm(double target){
-        Xerror = target - Xarm.getPosition() % 360; // we just want any value in that are dont care about rotaion
+    bool PIDMoveXarm(double target){ // fmod maybe
+        double Xerror = target - Xarm.get_position(); // we just want any value in that are dont care about rotaion
         double speed = XPval * Xerror + XIval * Xtotal - XDval * ((Xerror - XlastError) / PIDdelay);
         if(speed <= 20){
             Xtotal += Xerror;
@@ -72,7 +79,7 @@ public:
         Xarm.move_velocity(myMath.toRPM(bigTowerIsOnLeft, speed, Xarm.get_gearing()));
 
         //check if its there
-        if(fabs(Xerror - Xtarget) < Xtolerance){
+        if(fabs(Xerror - target) < Xtolerance){
             stopXarm();
             Xtotal = 0;
             return true;
@@ -81,8 +88,8 @@ public:
         return false;
     }
 
-    bool PIDMoveYarm(double pos){
-        Yerror = target - liftPot.value();
+    bool PIDMoveYarm(double target){
+        double Yerror = target - liftPot.get_value();
         double speed = YPval * Yerror + YIval * Ytotal - YDval * ((Yerror - YlastError) / PIDdelay);
         if(speed <= 20){
             Ytotal += Yerror;
@@ -92,7 +99,7 @@ public:
         Yarm.move_velocity(myMath.toRPM(false, speed, Yarm.get_gearing()));
 
         //check if its there
-        if(fabs(Yerror - Ytarget) < Ytolerance){
+        if(fabs(Yerror - target) < Ytolerance){
             stopYarm();
             Ytotal = 0;
             return true;
@@ -140,7 +147,7 @@ public:
     void loadRingsSequence(){
         goToIdleAuton(false);
         while(goToRings() && !emergencyStop){
-            delay(PIDdelay)
+            delay(PIDdelay);
         }
         // TODO setup piston lock here
         goToIdleAuton(true);
@@ -163,17 +170,19 @@ public:
 
     void confirmationSequence(){
         while(confirmState){
+            Xarm.move_velocity(myMath.toRPM(false, currentJoystickX / tweakSpeedDial, Xarm.get_gearing()));
+            Yarm.move_velocity(myMath.toRPM(false, currentJoystickY / tweakSpeedDial, Yarm.get_gearing()));
             delay(PIDdelay);
         }
         confirmState = false;
     }
 
-    void goToDrop(int level, bool left){
+    void goToDrop(){
         goToIdleAuton(false);
-        double Xcoord = left? Xleft : Xright;
-        double Ycoord = getLevelCoord(level);
+        double Xcoord = autonUserDropSideLeft? Xleft : Xright;
+        double Ycoord = getLevelCoord(autonUserDropLevel);
         while(goToPoint(Xcoord, Ycoord, false) && !emergencyStop){
-            delay(PIDdelay)
+            delay(PIDdelay);
         }
         confirmState = false; //just in case you hit it before the confirm it would break
         confirmationSequence();
@@ -183,16 +192,36 @@ public:
     void update()
     {
         // check for user updates from other task to run auto arm functions 
-        if(autonLoadRings){
+        if(autonLoadRings && !manualControl){
             loadRingsSequence();
             autonLoadRings = false;
+            autonMoving = false;
+        }
+        if(autonLoadRings && !manualControl){
+            goToDrop();
+            autonUserDrop = false;
+            autonMoving = false;
+        }
+        if(turnOffManualControl){
+            turnOffManualControl = false;
+            manualControl = false;
+            Yarm.move_velocity(0);
         }
     }
+
+    //auton buttons
 
     void loadRings(){
         autonMoving = true;
         autonLoadRings = true;
     }
+
+    void userDrop(){
+        autonMoving = true;
+        autonUserDrop = true;
+    }
+
+    //other important ones
 
     void confirmDrop(){ // TODO setup piston unlock here
         confirmState = true;
@@ -204,6 +233,68 @@ public:
 
     void toggleBigSide(){
         bigTowerIsOnLeft = !bigTowerIsOnLeft;
+    }
+    
+    //tower drop helper functions
+
+    void increaseLevel(){
+        if(autonUserDropLevel < 3){
+            autonUserDropLevel++;
+        }
+    }
+
+    void decreaseLevel(){
+        if(autonUserDropLevel > 1){
+            autonUserDropLevel--;
+        }
+    }
+
+    //joystick controllers
+
+    void setJoystickX(double val){
+        previousJoystickX = currentJoystickX;
+        currentJoystickX = val;
+    }
+
+    void setJoystickY(double val){
+        previousJoystickY = currentJoystickY;
+        currentJoystickY = val;
+    }
+
+    void handleVals(){
+        //joystick levels
+        if(currentJoystickY > 50 && previousJoystickY < 50){
+            increaseLevel();
+        } else if (currentJoystickY < -50 && previousJoystickY > -50){
+            decreaseLevel();
+        }
+
+        //side of sort
+        if(currentJoystickX > 50 && previousJoystickX < 50){
+            autonUserDropSideLeft = false;
+        } else if (currentJoystickX < -50 && previousJoystickX > -50){
+            autonUserDropSideLeft = true;
+        }
+    }
+
+    //power lifting 
+
+    void stopPowerLifting(){
+        turnOffManualControl = true;
+    }
+
+    void powerLiftUp(){
+        if(!autonMoving){ //TODO true and false here might need to be switched
+            manualControl = true;
+            Yarm.move_velocity(myMath.toRPM(true, torqueSpeed, Yarm.get_gearing()));
+        }
+    }
+
+    void powerLiftDown(){
+        if(!autonMoving){
+            manualControl = true;
+            Yarm.move_velocity(myMath.toRPM(false, torqueSpeed, Yarm.get_gearing()));
+        }
     }
 };
 #endif // ifndef LIFT
