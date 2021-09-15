@@ -4,7 +4,7 @@
 class WingClass
 {
 private:
-    double liftspeedMax = 50;
+    double liftSpeedMax = 50;
     double leftWingSpeed = 0;
     double rightWingSpeed = 0;
 
@@ -12,7 +12,6 @@ private:
     bool rightLocked = false;
 
 public:
-    double speedMedium = 63;
     Math myMath;
 
     //stops motor
@@ -37,36 +36,20 @@ public:
     void update()
     {
         //spin motors
-        LeftWing.move_velocity(myMath.toRPM(true, (leftWingSpeed / 127) * liftspeedMax, LeftWing.get_gearing()));
-        RightWing.move_velocity(myMath.toRPM(true, (rightWingSpeed / 127) * liftspeedMax, RightWing.get_gearing()));
-        //update left lock
-        if (leftLocked)
-        {
-            leftLock.set_value(HIGH);
-        }
-        else
-        {
-            leftLock.set_value(LOW);
-        }
-        //update right lock
-        if (rightLocked)
-        {
-            rightLock.set_value(HIGH);
-        }
-        else
-        {
-            rightLock.set_value(LOW);
-        }
+        LeftWing.move_velocity(myMath.toRPM(true, leftWingSpeed, LeftWing.get_gearing()));
+        RightWing.move_velocity(myMath.toRPM(true, rightWingSpeed, RightWing.get_gearing()));
     }
 
-    void toggleLeftLock()
+    void lockLeft()
     {
-        leftLocked = !leftLocked;
+        leftLocked = true;
+        leftLock.set_value(HIGH);
     }
 
-    void toggleRightLock()
+    void lockRight()
     {
-        rightLocked = !rightLocked;
+        rightLocked = true;
+        rightLock.set_value(HIGH);
     }
 
     bool leftLockState()
@@ -79,23 +62,23 @@ public:
         return rightLocked;
     }
 
-    void setLeftLockState(bool val)
+    void tiltLeftWing(bool rev)
     {
-        leftLocked = val;
+        leftWingSpeed = (rev? -1 : 1) * liftSpeedMax;
+    }
+    void tiltRightWing(bool rev)
+    {
+        rightWingSpeed = (rev? -1 : 1) * liftSpeedMax;
     }
 
-    void setRightLockState(bool val)
+    //Same functions but i wanted to rename them for funzies and readability
+    void spinLeft(bool rev)
     {
-        rightLocked = val;
+        leftWingSpeed = (rev? -1 : 1) * liftSpeedMax;
     }
-
-    void tiltLeftWing(double val)
+    void spinRight(bool rev)
     {
-        leftWingSpeed = val;
-    }
-    void tiltRightWing(double val)
-    {
-        rightWingSpeed = val;
+        rightWingSpeed = (rev? -1 : 1) * liftSpeedMax;
     }
 };
 #endif // ifndef WING

@@ -296,5 +296,39 @@ public:
             Yarm.move_velocity(myMath.toRPM(false, torqueSpeed, Yarm.get_gearing()));
         }
     }
+
+    //Controller text
+    void updateText(){
+        outputController.clear();
+        if(emergencyStop){
+            outputController.print(1,4,"Emergency Stop");
+        } else if(manualControl){
+            outputController.print(1,4,"Manual Control");
+        } else if(confirmState){
+            outputController.print(1,4,"Confirm?");
+        } else {
+            //update side of big tower
+            if(bigTowerIsOnLeft){
+                outputController.print(0,0,"▉");
+                outputController.print(1,0,"▉");
+                outputController.print(2,0,"▉");
+            } else {
+                outputController.print(0,18,"▉");
+                outputController.print(1,18,"▉");
+                outputController.print(2,18,"▉");
+            }
+            //update side picker
+            if(autonUserDropSideLeft){
+                outputController.print(1,2,"LEFT");
+            } else {
+                outputController.print(1,12,"RIGHT");
+            }
+            //update level of choice
+            for(int i = 0; i < autonUserDropLevel; i++){
+                outputController.print(i,7, "▉▉▉▉▉");
+            }
+        }
+        
+    }
 };
 #endif // ifndef LIFT

@@ -506,6 +506,17 @@ public:
         }
     }
 
+    //updates controller text
+    static void updateControllerText(void *)
+    {
+        while (true)
+        {
+            //update subsystem motors in their methods respectivley 
+            Lift.updateText();
+            c::task_delay(50);
+        }
+    }
+
     //returns true if bongo has initialized
     bool isinit()
     {
@@ -516,11 +527,14 @@ public:
     void initThreads()
     {
         // control updates from Lift
-        Task control(updateLift, nullptr, TASK_PRIORITY_DEFAULT,
+        Task controlLift(updateLift, nullptr, TASK_PRIORITY_DEFAULT,
                      TASK_STACK_DEPTH_DEFAULT, "control lift");
         // control updates from wings
-        Task control(updateWings, nullptr, TASK_PRIORITY_DEFAULT,
+        Task controlWings(updateWings, nullptr, TASK_PRIORITY_DEFAULT,
                      TASK_STACK_DEPTH_DEFAULT, "control wings");
+        //controlls controller controlling control text
+        Task controlText(updateControllerText, nullptr, TASK_PRIORITY_DEFAULT,
+                     TASK_STACK_DEPTH_DEFAULT, "control controller Text");
         // track locationFty
         Task updatePosition(updatePos, nullptr, TASK_PRIORITY_DEFAULT,
                             TASK_STACK_DEPTH_DEFAULT, "updatePos");

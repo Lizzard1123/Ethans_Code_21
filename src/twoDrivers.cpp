@@ -29,14 +29,11 @@ void opcontrol()
         // catie control
         //Bongo.catieControl();
 
-        Bongo.Wings.tiltLeftWing(partner.get_analog(E_CONTROLLER_ANALOG_LEFT_X));
-        Bongo.Wings.tiltRightWing(partner.get_analog(E_CONTROLLER_ANALOG_RIGHT_X));
-
         //locks
         if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_LEFT)){
-            Bongo.Wings.toggleLeftLock();
+            Bongo.Wings.lockLeft();
         } else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_RIGHT)){
-            Bongo.Wings.toggleRightLock();
+            Bongo.Wings.lockRight();
         }
 
         //lift controller updaters
@@ -68,20 +65,34 @@ void opcontrol()
         }
 
 
-        //Spinning towers 
-        if(partner.get_digital(DIGITAL_A)){
+        //Spinning towers && controling wings 
+        if(master.get_digital(DIGITAL_L1)){
+            Bongo.Wings.tiltRightWing(true);
+        } else if (master.get_digital(DIGITAL_L2)){
+            Bongo.Wings.tiltRightWing(false);
+        } else if(partner.get_digital(DIGITAL_R1) && Bongo.Wings.rightLockState()){
             //spin wing wheel right forward
-        } else if (partner.get_digital(DIGITAL_A)){
+            Bongo.Wings.spinRight(true);
+        } else if (partner.get_digital(DIGITAL_R2) && Bongo.Wings.rightLockState()){
             //spin wing wheel right reverse
+            Bongo.Wings.spinRight(false);
         } else {
             //dont spin wing wheel right
+            Bongo.Wings.stopRight();
         }
-        if(partner.get_digital(DIGITAL_A)){
+        if(master.get_digital(DIGITAL_L1)){
+            Bongo.Wings.tiltLeftWing(true);
+        } else if (master.get_digital(DIGITAL_L2)){
+            Bongo.Wings.tiltLeftWing(false);
+        } else if(partner.get_digital(DIGITAL_L1) && Bongo.Wings.leftLockState()){
             //spin wing wheel left forward
-        } else if (partner.get_digital(DIGITAL_A)){
+            Bongo.Wings.spinLeft(true);
+        } else if (partner.get_digital(DIGITAL_L2) && Bongo.Wings.leftLockState()){
             //spin wing wheel left reverse
+            Bongo.Wings.spinLeft(false);
         } else {
             //dont spin wing wheel left
+            Bongo.Wings.stopLeft();
         }
 
 
