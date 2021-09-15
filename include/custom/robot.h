@@ -517,6 +517,42 @@ public:
         }
     }
 
+    //updates controller rumble
+    static void updateControllerRumble(void *)
+    {
+        bool forGood = false;
+        bool forBad = true;
+        while (true)
+        {
+            //update subsystem motors in their methods respectivley 
+            if(forGood){
+                if(competition::is_connected() && !competition::is_autonomous()){
+                    //halfway and 30 sec timer rumble for drivers
+                    c::task_delay(37500);
+                    master.rumble("....");
+                    partner.rumble("....");
+                    c::task_delay(37500);
+                    master.rumble("----");
+                    partner.rumble("----");
+                }
+            } else if (forBad){
+                c::task_delay(69420);
+                master.rumble(".--. ");
+                master.rumble(". ");
+                master.rumble("-. ");
+                master.rumble(".. ");
+                master.rumble("... ");
+                partner.rumble(".--. ");
+                partner.rumble(". ");
+                partner.rumble("-. ");
+                partner.rumble(".. ");
+                partner.rumble("... ");
+            }
+            
+            
+        }
+    }
+
     //returns true if bongo has initialized
     bool isinit()
     {

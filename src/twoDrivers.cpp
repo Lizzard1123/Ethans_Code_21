@@ -18,7 +18,6 @@ void opcontrol()
 {
     //space to run stuff once before begin driving
     master.print(1, 1, "Player 1");
-    partner.print(1, 1, "Player 2");
     while (true)
     {
         //prints to screen the position and rotation of bongo
