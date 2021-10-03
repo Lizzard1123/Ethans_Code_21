@@ -469,9 +469,13 @@ public:
         std::string xPos = "X: " + std::to_string(X);
         std::string yPos = "Y: " + std::to_string(Y);
         std::string roationPos = "roation: " + std::to_string(rotation);
+        std::string xArmDebug = "XArm: " + std::to_string(Xarm.get_position());
+        std::string yArmDebug = "YArm: " + std::to_string(liftPot.get_value());
         lv_label_set_text(debugXLabel, xPos.c_str());
         lv_label_set_text(debugYLabel, yPos.c_str());
         lv_label_set_text(debugRotationLabel, roationPos.c_str());
+        lv_label_set_text(debugXarmLabel, xArmDebug.c_str());
+        lv_label_set_text(debugYarmLabel, yArmDebug.c_str());
     }
 
     // change current team (swap) pressing L1 and L2 at same time when called
@@ -513,7 +517,6 @@ public:
         {
             //update subsystem motors in their methods respectivley 
             Lift.updateText();
-            c::task_delay(50);
         }
     }
 
@@ -569,11 +572,15 @@ public:
         Task controlWings(updateWings, nullptr, TASK_PRIORITY_DEFAULT,
                      TASK_STACK_DEPTH_DEFAULT, "control wings");
         //controlls controller controlling control text
+        printf("updateTexter");
         Task controlText(updateControllerText, nullptr, TASK_PRIORITY_DEFAULT,
                      TASK_STACK_DEPTH_DEFAULT, "control controller Text");
+        //rumble her
+        Task controlRumble(updateControllerRumble, nullptr, TASK_PRIORITY_DEFAULT,
+                     TASK_STACK_DEPTH_DEFAULT, "control controller rumble");
         // track locationFty
-        Task updatePosition(updatePos, nullptr, TASK_PRIORITY_DEFAULT,
-                            TASK_STACK_DEPTH_DEFAULT, "updatePos");
+        //Task updatePosition(updatePos, nullptr, TASK_PRIORITY_DEFAULT,
+        //                    TASK_STACK_DEPTH_DEFAULT, "updatePos");
         initz = true;
     }
 

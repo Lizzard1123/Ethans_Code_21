@@ -2,14 +2,14 @@
 #define GLOBAL
 #include "main.h"
 //motor ports
-#define FLPort 18 
-#define FRPort 12
-#define BLPort 10
-#define BRPort 2 
-#define LeftWingPort 99 //TODO assign port
+#define FLPort 20 
+#define FRPort 11
+#define BLPort 19
+#define BRPort 12 
+#define LeftWingPort 8
 #define RightWingPort 99 //TODO assign port
-#define YarmPort 99 //TODO assign port
-#define XarmPort 99 //TODO assign port
+#define YarmPort 9
+#define XarmPort 10
 #define leftEyePort 99 //TODO assign port
 #define rightEyePort 99 //TODO assign port
 #define backEyePort 99 //TODO assign port
@@ -18,7 +18,7 @@
 #define RightSideNum 1
 #define BackSideNum 2
 #define expanderPort 99 //TODO assign port
-#define leftLockPort 99 //TODO assign port
+#define leftLockPort 'f'
 #define rightLockPort 99 //TODO assign port
 
 //motors
@@ -55,9 +55,9 @@ extern ADIAnalogIn liftPot;
 
 //LED
 //extern ADIDigitalOut led;
-extern ADIAnalogOut leftLock;
-extern ADIAnalogOut rightLock;
-extern ADIAnalogOut backLock;
+extern ADIDigitalOut leftLock;
+extern ADIDigitalOut rightLock;
+extern ADIDigitalOut backLock;
 
 //limit switch / button
 //extern ADIDigitalIn tailSensor;
@@ -74,6 +74,8 @@ extern okapi::ADIEncoder  middleOdom;
 extern lv_obj_t *debugXLabel;
 extern lv_obj_t *debugYLabel;
 extern lv_obj_t *debugRotationLabel;
+extern lv_obj_t *debugXarmLabel;
+extern lv_obj_t *debugYarmLabel;
 
 //global teamcolor
 extern bool teamIsBlue;

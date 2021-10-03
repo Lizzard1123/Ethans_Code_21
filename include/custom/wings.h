@@ -25,12 +25,12 @@ public:
 
     void stopLeft()
     {
-        LeftWing.move_velocity(0);
+        leftWingSpeed = 0;
     }
 
     void stopRight()
     {
-        RightWing.move_velocity(0);
+        rightWingSpeed = 0;
     }
 
     void update()
@@ -43,13 +43,13 @@ public:
     void lockLeft()
     {
         leftLocked = true;
-        leftLock.set_value(HIGH);
+        leftLock.set_value(true);
     }
 
     void lockRight()
     {
         rightLocked = true;
-        rightLock.set_value(HIGH);
+        rightLock.set_value(true);
     }
 
     bool leftLockState()

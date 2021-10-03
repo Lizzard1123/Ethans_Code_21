@@ -17,7 +17,7 @@
 void opcontrol()
 {
     //space to run stuff once before begin driving
-    master.print(1, 1, "Player 1");
+    master.print(0, 0, "Player 1");
     while (true)
     {
         //prints to screen the position and rotation of bongo
@@ -27,11 +27,18 @@ void opcontrol()
         Bongo.tylerControl();
         // catie control
         //Bongo.catieControl();
-
+        //testing for arm pos
+        if(master.get_digital(DIGITAL_Y)){
+            Xarm.move_velocity(10);
+        } else if(master.get_digital(DIGITAL_A)){
+            Xarm.move_velocity(-10);
+        } else {
+            Bongo.Lift.stopXarm();
+        }
         //locks
-        if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_LEFT)){
+        if(master.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
             Bongo.Wings.lockLeft();
-        } else if (master.get_digital_new_press(E_CONTROLLER_DIGITAL_RIGHT)){
+        } else if (master.get_digital(E_CONTROLLER_DIGITAL_RIGHT)){
             Bongo.Wings.lockRight();
         }
 
@@ -65,30 +72,31 @@ void opcontrol()
 
 
         //Spinning towers && controling wings 
-        if(master.get_digital(DIGITAL_L1)){
-            Bongo.Wings.tiltRightWing(true);
-        } else if (master.get_digital(DIGITAL_L2)){
-            Bongo.Wings.tiltRightWing(false);
-        } else if(partner.get_digital(DIGITAL_R1) && Bongo.Wings.rightLockState()){
+        if(partner.get_digital(DIGITAL_R1) && Bongo.Wings.rightLockState()){
             //spin wing wheel right forward
             Bongo.Wings.spinRight(true);
         } else if (partner.get_digital(DIGITAL_R2) && Bongo.Wings.rightLockState()){
             //spin wing wheel right reverse
             Bongo.Wings.spinRight(false);
+        } else if(master.get_digital(DIGITAL_R1) && !Bongo.Wings.rightLockState()){
+            Bongo.Wings.tiltRightWing(true);
+        } else if (master.get_digital(DIGITAL_R2) && !Bongo.Wings.rightLockState()){
+            Bongo.Wings.tiltRightWing(false);
         } else {
             //dont spin wing wheel right
             Bongo.Wings.stopRight();
         }
-        if(master.get_digital(DIGITAL_L1)){
-            Bongo.Wings.tiltLeftWing(true);
-        } else if (master.get_digital(DIGITAL_L2)){
-            Bongo.Wings.tiltLeftWing(false);
-        } else if(partner.get_digital(DIGITAL_L1) && Bongo.Wings.leftLockState()){
+
+        if(partner.get_digital(DIGITAL_L1) && Bongo.Wings.leftLockState()){
             //spin wing wheel left forward
             Bongo.Wings.spinLeft(true);
         } else if (partner.get_digital(DIGITAL_L2) && Bongo.Wings.leftLockState()){
             //spin wing wheel left reverse
             Bongo.Wings.spinLeft(false);
+        } else if(master.get_digital(DIGITAL_L1) && !Bongo.Wings.leftLockState()){
+            Bongo.Wings.tiltLeftWing(true);
+        } else if (master.get_digital(DIGITAL_L2) && !Bongo.Wings.leftLockState()){
+            Bongo.Wings.tiltLeftWing(false);
         } else {
             //dont spin wing wheel left
             Bongo.Wings.stopLeft();

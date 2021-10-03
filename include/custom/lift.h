@@ -14,10 +14,9 @@ private:
     //update bools
     bool autonLoadRings;
     bool autonUserDrop;
-    int autonUserDropLevel = 0;
+    int autonUserDropLevel = 1;
     bool autonUserDropSideLeft = true;
     // Screen/Interface stuff 
-    Controller outputController = partner; 
     bool autonMoving = false;
     bool confirmState = false;
     double previousJoystickX = 0;
@@ -299,36 +298,87 @@ public:
 
     //Controller text
     void updateText(){
-        outputController.clear();
+        //partner.clear();
+        //partner.set_text(0,0,"hi");
         if(emergencyStop){
-            outputController.print(1,4,"Emergency Stop");
+            partner.clear();
+            delay(55);
+            partner.set_text(1,4,"Emergency Stop");
         } else if(manualControl){
-            outputController.print(1,4,"Manual Control");
+            partner.clear();
+            delay(55);
+            partner.set_text(1,4,"Manual Control");
         } else if(confirmState){
-            outputController.print(1,4,"Confirm?");
+            partner.clear();
+            delay(55);
+            partner.set_text(1,4,"Confirm?");
         } else {
+            /*
             //update side of big tower
             if(bigTowerIsOnLeft){
-                outputController.print(0,0,"▉");
-                outputController.print(1,0,"▉");
-                outputController.print(2,0,"▉");
+                partner.set_text(0,0,"▉");
+                partner.set_text(1,0,"▉");
+                partner.set_text(2,0,"▉");
             } else {
-                outputController.print(0,18,"▉");
-                outputController.print(1,18,"▉");
-                outputController.print(2,18,"▉");
+                partner.set_text(0,18,"▉");
+                partner.set_text(1,18,"▉");
+                partner.set_text(2,18,"▉");
             }
             //update side picker
             if(autonUserDropSideLeft){
-                outputController.print(1,2,"LEFT");
+                partner.set_text(1,2,"LEFT");
             } else {
-                outputController.print(1,12,"RIGHT");
+                partner.set_text(1,12,"RIGHT");
             }
             //update level of choice
             for(int i = 0; i < autonUserDropLevel; i++){
-                outputController.print(i,7, "▉▉▉▉▉");
+                partner.print(i,7, "▉▉▉▉▉");
             }
+            */
+           //
+           std::string totalLine = "";
+           std::string firstLinePart1 =  bigTowerIsOnLeft? "▉    " : "     ";
+           totalLine.append(firstLinePart1);
+           std::string firstLinePart2 = (autonUserDropLevel == 3)? "▉▉▉▉▉" : "     " ;
+           totalLine.append(firstLinePart2);
+           std::string firstLinePart3 = !bigTowerIsOnLeft?"    ▉":"     ";
+           totalLine.append(firstLinePart3);
+           std::string secondLinePart1 = autonUserDropSideLeft?"Left ":"     ";
+           totalLine.append(secondLinePart1);
+           std::string secondLinePart2 = (autonUserDropLevel == 2)?"▉▉▉▉▉":"     ";
+           totalLine.append(secondLinePart2);
+           std::string secondLinePart3 = !autonUserDropSideLeft?"Right":"     ";
+           totalLine.append(secondLinePart3);
+           std::string thirdLinePart1 = bigTowerIsOnLeft?"▉    ":"     ";
+           totalLine.append(thirdLinePart1);
+           std::string thirdLinePart2 = (autonUserDropLevel == 1)?"▉▉▉▉▉":"     " ;
+           totalLine.append(thirdLinePart2);
+           std::string thirdLinePart3 = !bigTowerIsOnLeft?"     ":"    ▉";
+           totalLine.append(thirdLinePart3);
+           partner.set_text(0,0, totalLine);
+           printf(totalLine.data()); //.c_str();
+           //if not
+           /*
+           std::string firstLine = "";
+           firstLine.append(firstLinePart1);
+           firstLine.append(firstLinePart2);
+           firstLine.append(firstLinePart3);
+           std::string secondLine = "";
+           secondLine.append(secondLinePart1);
+           secondLine.append(secondLinePart2);
+           secondLine.append(secondLinePart3);
+           std::string thirdLine = "";
+           thirdLine.append(thirdLinePart1);
+           thirdLine.append(thirdLinePart2);
+           thirdLine.append(thirdLinePart3);
+           partner.set_text(0,0, firstLine);
+           delay(55);
+           partner.set_text(1,0, secondLine);
+           delay(55);
+           partner.set_text(2,0, thirdLine);
+           */
         }
-        
+        delay(55);
     }
 };
 #endif // ifndef LIFT

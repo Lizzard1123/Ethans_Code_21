@@ -162,6 +162,14 @@ lv_obj_t *debugRotation = lv_obj_create(scrDebug, NULL);
 //test
 lv_obj_t *debugRotationLabel = lv_label_create(debugRotation, NULL);
 
+lv_obj_t *debugXarm = lv_obj_create(scrDebug, NULL);
+
+lv_obj_t *debugXarmLabel = lv_label_create(debugXarm, NULL);
+
+lv_obj_t *debugYarm = lv_obj_create(scrDebug, NULL);
+
+lv_obj_t *debugYarmLabel = lv_label_create(debugYarm, NULL);
+
 bool colorSelected = false;
 bool sideSelected = false;
 bool autonSelected = false;
@@ -937,6 +945,11 @@ void initDebug()
     lv_obj_set_pos(debugY, 0, LV_VER_RES / 8);
     lv_obj_set_size(debugRotation, LV_HOR_RES / 4, LV_VER_RES / 8);
     lv_obj_set_pos(debugRotation, 0, LV_VER_RES / 4);
+    //arm debug
+    lv_obj_set_size(debugXarm, LV_HOR_RES / 4, LV_VER_RES / 8);
+    lv_obj_set_pos(debugXarm, 0, 3 * LV_VER_RES / 8);
+    lv_obj_set_size(debugYarm, LV_HOR_RES / 4, LV_VER_RES / 8);
+    lv_obj_set_pos(debugYarm, 0, LV_VER_RES / 2);
 }
 
 void blackBack()
@@ -980,7 +993,9 @@ void initialize()
     liftPot.calibrate();
     //printf("Init pot \n");
     //delay(250); idk about this delay
-
+    //locks
+    leftLock.set_value(LOW);
+    rightLock.set_value(LOW);
     //TODO set break modes for all motors
     /*
         E_MOTOR_BRAKE_BRAKE

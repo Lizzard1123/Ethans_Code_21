@@ -8,7 +8,7 @@ Motor FR(FRPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES);
 Motor BL(BLPort, E_MOTOR_GEARSET_18, false, E_MOTOR_ENCODER_DEGREES);
 Motor BR(BRPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES);
 Motor Yarm(YarmPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES); 
-Motor Xarm(XarmPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_DEGREES); 
+Motor Xarm(XarmPort, E_MOTOR_GEARSET_18, true, E_MOTOR_ENCODER_COUNTS); 
 Motor LeftWing(LeftWingPort, E_MOTOR_GEARSET_36, true, E_MOTOR_ENCODER_DEGREES); 
 Motor RightWing(RightWingPort, E_MOTOR_GEARSET_36, true, E_MOTOR_ENCODER_DEGREES); 
 
@@ -32,19 +32,23 @@ vision_signature_s_t MOGO_CUSTOM_YELLOW = Vision::signature_from_utility(MOGO_CU
 
 //LED/digital out for pnematics
 //ADIDigitalOut led('F', 1);
-ADIAnalogOut leftLock ({{expanderPort, leftLockPort}});
-ADIAnalogOut rightLock ({{expanderPort, rightLockPort}});
+//ADIDigitalOut  leftLock ({{expanderPort, leftLockPort}});
+//ADIDigitalOut  rightLock ({{expanderPort, rightLockPort}});
+//TODO put lock ports back into expanders
+ADIDigitalOut leftLock (leftLockPort);
+ADIDigitalOut rightLock (rightLockPort);
 
 //button / limit switch
 //ADIDigitalIn tailSensor(tailSensorPort);
 
 //pots
-ADIAnalogIn liftPot(8);
+ADIAnalogIn liftPot('b');
 
-// Odom
-okapi::ADIEncoder  leftOdom('a', 'b', true);
-okapi::ADIEncoder  rightOdom('g', 'h', false);
-okapi::ADIEncoder  middleOdom('e', 'f', true);
+// Odom 
+//TODO put odom back 
+//okapi::ADIEncoder  leftOdom('a', 'b', true);
+//okapi::ADIEncoder  rightOdom('g', 'h', false);
+//okapi::ADIEncoder  middleOdom('e', 'f', true);
 
 // Staic defines
 RobotMovement Robot::Movement;
