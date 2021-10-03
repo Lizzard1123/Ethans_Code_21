@@ -6,8 +6,9 @@ class LiftClass
 private:
     double maxLiftSpeed = 100;
     double torqueSpeed = 50;
-    double PIDdelay = 10;
+    double PIDdelay = 1;
     bool emergencyStop = false;
+    bool promptConfirm = false;
     bool bigTowerIsOnLeft = true;
     bool manualControl = false;
     bool turnOffManualControl = false;
@@ -23,33 +24,35 @@ private:
     double previousJoystickY = 0;
     double currentJoystickX = 0;
     double currentJoystickY = 0;
-    double tweakSpeedDial = 4;
+    double tweakSpeedDial = 8;
     //X arm PID
-    double XPval = 1;
+    double XPval = .15;
     double XIval = 0;
-    double XDval = 0;
+    double XDval = .5;
     double XlastError = 0;
     double Xtotal = 0;
-    double Xtolerance = 1;
+    double Xtolerance = 3;
     //Y arm PID
     double YPval = 1;
     double YIval = 0;
     double YDval = 0;
     double YlastError = 0;
     double Ytotal = 0;
-    double Ytolerance = 1;
+    double Ytolerance = 5;
     //Points
-    double XidleTop;
-    double XidleBottom;
-    double Yidle;
-    double Xrings;
-    double Yrings;
+    double XidleTop = 973;
+    double XidleBottom = 0;
+    double Yidle = 2190;
+    double Xrings = 0;
+    double Yrings = 1107;
     //Drops
-    double Xleft;
-    double Xright;
-    double Ytall;
-    double Ymed;
-    double Ysmall;
+    double Xleft = 934;
+    double Xright = 879;
+    double Ytall = 2375;
+    double Ymed = 2300;
+    double XmedLeft = -258; //pos is right
+    double XmedRight = 258;
+    double Ysmall = 1958;
 public:
     Math myMath;
     //stops motor
@@ -75,10 +78,19 @@ public:
         }
 
         //Spin motor
-        Xarm.move_velocity(myMath.toRPM(bigTowerIsOnLeft, speed, Xarm.get_gearing()));
+        printf("spinning X at %f\n", speed);
+        if(speed > 20){
+            speed = 20;
+        } else if (speed < -20){
+            speed = -20;
+        }
+        printf("corrected spinning X at %f\n", speed);
+        Xarm.move_velocity(myMath.toRPM(!bigTowerIsOnLeft, speed, Xarm.get_gearing()));
 
         //check if its there
-        if(fabs(Xerror - target) < Xtolerance){
+        printf("Xerror at %f\n", Xerror);
+        if(fabs(Xerror) <= Xtolerance){
+            printf("Stopping Xarm");
             stopXarm();
             Xtotal = 0;
             return true;
@@ -95,10 +107,13 @@ public:
         }
 
         //Spin motor
-        Yarm.move_velocity(myMath.toRPM(false, speed, Yarm.get_gearing()));
+        printf("spinning Y at %f\n", speed);
+        Yarm.move_velocity(myMath.toRPM(true, speed, Yarm.get_gearing()));
 
         //check if its there
-        if(fabs(Yerror - target) < Ytolerance){
+        printf("Yerror: %f", fabs(Yerror));
+        if(fabs(Yerror) <= Ytolerance){
+            printf("Stopping Yarm");
             stopYarm();
             Ytotal = 0;
             return true;
@@ -108,7 +123,7 @@ public:
     }
     
     bool goToPoint(double X, double Y, bool Xfirst){
-        bool reachedPoints = false;
+        printf("going to point: %f, %f\n", X, Y);
         if(Xfirst){
             if(!PIDMoveXarm(X)){ // if Xarm isnt in the right spot return false
                 return false;
@@ -126,11 +141,11 @@ public:
                 return true;
             }
         }
-        return false;       
+        return false;
     }
 
-    bool goToIdle(bool topIdle){
-        return goToPoint(topIdle? XidleTop : XidleBottom, Yidle, topIdle);
+    bool goToIdle(bool xfirst){
+        return goToPoint(XidleBottom, Yidle, xfirst);
     }
 
     bool goToRings(){
@@ -138,18 +153,20 @@ public:
     }
 
     void goToIdleAuton(bool top){
-        while(goToIdle(top) && !emergencyStop){
+        while(!goToIdle(top) && !emergencyStop){
+            printf("going to idle auton delay\n");
             delay(PIDdelay);
         }
     }
 
     void loadRingsSequence(){
         goToIdleAuton(false);
-        while(goToRings() && !emergencyStop){
+        ringLock.set_value(HIGH);
+        while(!goToRings() && !emergencyStop){
             delay(PIDdelay);
         }
-        // TODO setup piston lock here
-        goToIdleAuton(true);
+        ringLock.set_value(LOW);
+        goToIdleAuton(false);
     }
 
     double getLevelCoord(int level){
@@ -167,41 +184,66 @@ public:
         return 0;
     }
 
+    double getXCoord(int level, bool left){
+        switch(level){
+            case 1:
+                return left? XmedLeft: XmedRight;
+                break;
+            case 2:
+                return left? XmedLeft: XmedRight;
+                break;
+            case 3:
+                return left? Xleft: Xright;
+                break;
+        }
+        return 0;
+    }
+
     void confirmationSequence(){
-        while(confirmState){
+        while(!confirmState){
             Xarm.move_velocity(myMath.toRPM(false, currentJoystickX / tweakSpeedDial, Xarm.get_gearing()));
             Yarm.move_velocity(myMath.toRPM(false, currentJoystickY / tweakSpeedDial, Yarm.get_gearing()));
             delay(PIDdelay);
         }
-        confirmState = false;
     }
 
     void goToDrop(){
+        printf("starting drop\n");
         goToIdleAuton(false);
-        double Xcoord = autonUserDropSideLeft? Xleft : Xright;
+        printf("Is idled\n");
+        double Xcoord = getXCoord(autonUserDropLevel, autonUserDropSideLeft);
         double Ycoord = getLevelCoord(autonUserDropLevel);
-        while(goToPoint(Xcoord, Ycoord, false) && !emergencyStop){
+        while(!goToPoint(Xcoord, Ycoord, false) && !emergencyStop){
+            printf("going to point\n");
             delay(PIDdelay);
         }
         confirmState = false; //just in case you hit it before the confirm it would break
+        promptConfirm = true;
         confirmationSequence();
-        goToIdleAuton(false);
+        delay(1001);
+        promptConfirm = false;
+        confirmState = false;
+        goToIdleAuton(true);
     }
 
     void update()
     {
         // check for user updates from other task to run auto arm functions 
         if(autonLoadRings && !manualControl){
+            printf("starting load rings");
             loadRingsSequence();
             autonLoadRings = false;
             autonMoving = false;
         }
-        if(autonLoadRings && !manualControl){
+        if(autonUserDrop && !manualControl){
+            printf("herer\n");
             goToDrop();
+            printf("shouldnt be here\n");
             autonUserDrop = false;
             autonMoving = false;
         }
-        if(turnOffManualControl){
+        if(turnOffManualControl && manualControl){
+            printf("manual controll");
             turnOffManualControl = false;
             manualControl = false;
             Yarm.move_velocity(0);
@@ -223,6 +265,7 @@ public:
     //other important ones
 
     void confirmDrop(){ // TODO setup piston unlock here
+        ringLock.set_value(HIGH);
         confirmState = true;
     }
 
@@ -308,57 +351,22 @@ public:
             partner.clear();
             delay(55);
             partner.set_text(1,4,"Manual Control");
-        } else if(confirmState){
+        } else if(promptConfirm && autonUserDrop){
             partner.clear();
             delay(55);
             partner.set_text(1,4,"Confirm?");
         } else {
-            /*
-            //update side of big tower
-            if(bigTowerIsOnLeft){
-                partner.set_text(0,0,"▉");
-                partner.set_text(1,0,"▉");
-                partner.set_text(2,0,"▉");
-            } else {
-                partner.set_text(0,18,"▉");
-                partner.set_text(1,18,"▉");
-                partner.set_text(2,18,"▉");
-            }
-            //update side picker
-            if(autonUserDropSideLeft){
-                partner.set_text(1,2,"LEFT");
-            } else {
-                partner.set_text(1,12,"RIGHT");
-            }
-            //update level of choice
-            for(int i = 0; i < autonUserDropLevel; i++){
-                partner.print(i,7, "▉▉▉▉▉");
-            }
-            */
-           //
-           std::string totalLine = "";
-           std::string firstLinePart1 =  bigTowerIsOnLeft? "▉    " : "     ";
-           totalLine.append(firstLinePart1);
-           std::string firstLinePart2 = (autonUserDropLevel == 3)? "▉▉▉▉▉" : "     " ;
-           totalLine.append(firstLinePart2);
-           std::string firstLinePart3 = !bigTowerIsOnLeft?"    ▉":"     ";
-           totalLine.append(firstLinePart3);
-           std::string secondLinePart1 = autonUserDropSideLeft?"Left ":"     ";
-           totalLine.append(secondLinePart1);
-           std::string secondLinePart2 = (autonUserDropLevel == 2)?"▉▉▉▉▉":"     ";
-           totalLine.append(secondLinePart2);
-           std::string secondLinePart3 = !autonUserDropSideLeft?"Right":"     ";
-           totalLine.append(secondLinePart3);
-           std::string thirdLinePart1 = bigTowerIsOnLeft?"▉    ":"     ";
-           totalLine.append(thirdLinePart1);
-           std::string thirdLinePart2 = (autonUserDropLevel == 1)?"▉▉▉▉▉":"     " ;
-           totalLine.append(thirdLinePart2);
-           std::string thirdLinePart3 = !bigTowerIsOnLeft?"     ":"    ▉";
-           totalLine.append(thirdLinePart3);
-           partner.set_text(0,0, totalLine);
-           printf(totalLine.data()); //.c_str();
-           //if not
-           /*
+           std::string firstLinePart1 =  bigTowerIsOnLeft? "0      " : "       ";
+           std::string firstLinePart2 = (autonUserDropLevel >= 3)? "000000" : "      " ;
+           std::string firstLinePart3 = !bigTowerIsOnLeft?"      0":"       ";
+           std::string secondLinePart1 = autonUserDropSideLeft?"Left  ":"       ";
+           std::string secondLinePart2 = (autonUserDropLevel >= 2)?"000000":"      ";
+           std::string secondLinePart3 = !autonUserDropSideLeft?"  Right":"       ";
+           std::string thirdLinePart1 = bigTowerIsOnLeft?"0      ":"       ";
+           std::string thirdLinePart2 = (autonUserDropLevel >= 1)?"000000":"       " ;
+           std::string thirdLinePart3 = !bigTowerIsOnLeft?"      0":"      ";
+           partner.clear();
+           delay(55);
            std::string firstLine = "";
            firstLine.append(firstLinePart1);
            firstLine.append(firstLinePart2);
@@ -376,9 +384,8 @@ public:
            partner.set_text(1,0, secondLine);
            delay(55);
            partner.set_text(2,0, thirdLine);
-           */
         }
-        delay(55);
+        delay(100);
     }
 };
 #endif // ifndef LIFT

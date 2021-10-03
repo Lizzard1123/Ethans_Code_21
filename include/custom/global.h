@@ -20,6 +20,7 @@
 #define expanderPort 99 //TODO assign port
 #define leftLockPort 'f'
 #define rightLockPort 99 //TODO assign port
+#define ringLockPort 'g'
 
 //motors
 extern Motor FL;
@@ -57,7 +58,7 @@ extern ADIAnalogIn liftPot;
 //extern ADIDigitalOut led;
 extern ADIDigitalOut leftLock;
 extern ADIDigitalOut rightLock;
-extern ADIDigitalOut backLock;
+extern ADIDigitalOut ringLock;
 
 //limit switch / button
 //extern ADIDigitalIn tailSensor;

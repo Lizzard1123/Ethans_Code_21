@@ -37,6 +37,8 @@ vision_signature_s_t MOGO_CUSTOM_YELLOW = Vision::signature_from_utility(MOGO_CU
 //TODO put lock ports back into expanders
 ADIDigitalOut leftLock (leftLockPort);
 ADIDigitalOut rightLock (rightLockPort);
+ADIDigitalOut ringLock (ringLockPort);
+
 
 //button / limit switch
 //ADIDigitalIn tailSensor(tailSensorPort);

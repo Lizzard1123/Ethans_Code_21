@@ -994,8 +994,9 @@ void initialize()
     //printf("Init pot \n");
     //delay(250); idk about this delay
     //locks
-    leftLock.set_value(LOW);
-    rightLock.set_value(LOW);
+    //leftLock.set_value(LOW);
+    //rightLock.set_value(LOW);
+    ringLock.set_value(LOW);
     //TODO set break modes for all motors
     /*
         E_MOTOR_BRAKE_BRAKE

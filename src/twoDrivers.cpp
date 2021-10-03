@@ -17,7 +17,7 @@
 void opcontrol()
 {
     //space to run stuff once before begin driving
-    master.print(0, 0, "Player 1");
+    master.print(0, 8, "Player 1");
     while (true)
     {
         //prints to screen the position and rotation of bongo
@@ -28,13 +28,13 @@ void opcontrol()
         // catie control
         //Bongo.catieControl();
         //testing for arm pos
-        if(master.get_digital(DIGITAL_Y)){
-            Xarm.move_velocity(10);
-        } else if(master.get_digital(DIGITAL_A)){
-            Xarm.move_velocity(-10);
-        } else {
-            Bongo.Lift.stopXarm();
-        }
+        //if(master.get_digital(DIGITAL_Y)){
+        //    Xarm.move_velocity(10);
+        //} else if(master.get_digital(DIGITAL_A)){
+        //    Xarm.move_velocity(-10);
+        //} else {
+        //    Bongo.Lift.stopXarm();
+        //}
         //locks
         if(master.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
             Bongo.Wings.lockLeft();
@@ -52,13 +52,17 @@ void opcontrol()
             partner.get_digital(DIGITAL_R1) && partner.get_digital(DIGITAL_R2)){
             Bongo.Lift.toggleEmergencyStop();
         }
-        if(partner.get_digital(DIGITAL_A)){
+        if(partner.get_digital_new_press(DIGITAL_A)){
+            printf("confirming drop \n");
             Bongo.Lift.confirmDrop(); //unlocks ring piston and ends user drop command
-        } else if (partner.get_digital(DIGITAL_B)){
+        } else if (partner.get_digital_new_press(DIGITAL_B)){
+            printf("toggle big side\n");
             Bongo.Lift.toggleBigSide(); //toggles the side that the big tower has been locked into
-        } else if (partner.get_digital(DIGITAL_X)){
+        } else if (partner.get_digital_new_press(DIGITAL_X)){
+            printf("loading rings\n");
             Bongo.Lift.loadRings(); //starts auton load rings
-        } else if (partner.get_digital(DIGITAL_Y)){
+        } else if (partner.get_digital_new_press(DIGITAL_Y)){
+            printf("user drop\n");
             Bongo.Lift.userDrop(); //starts auton go to position
         }
         //manual powering 
