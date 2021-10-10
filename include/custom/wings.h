@@ -8,6 +8,13 @@ private:
     double leftWingSpeed = 0;
     double rightWingSpeed = 0;
 
+    //max mins
+    double leftWingMax = 2225;
+    double leftWingMin = 1534;
+    double rightWingMax = 3520;
+    double rightWingMin = 2577;
+
+    //locs
     bool leftLocked = false;
     bool rightLocked = false;
 
@@ -36,8 +43,21 @@ public:
     void update()
     {
         //spin motors
-        LeftWing.move_velocity(myMath.toRPM(true, leftWingSpeed, LeftWing.get_gearing()));
-        RightWing.move_velocity(myMath.toRPM(true, rightWingSpeed, RightWing.get_gearing()));
+        if(leftWingSpeed < 0 && leftWingPot.get_value() < leftWingMax){
+            LeftWing.move_velocity(myMath.toRPM(true, leftWingSpeed, LeftWing.get_gearing()));
+        } else if(leftWingSpeed > 0 && leftWingPot.get_value() > leftWingMin){
+            LeftWing.move_velocity(myMath.toRPM(true, leftWingSpeed, LeftWing.get_gearing()));
+        } else {
+            LeftWing.move_velocity(0);
+        }
+        if(rightWingSpeed < 0 && rightWingPot.get_value() < rightWingMax){
+            RightWing.move_velocity(myMath.toRPM(true, rightWingSpeed, RightWing.get_gearing()));
+        } else if(rightWingSpeed > 0 && rightWingPot.get_value() > rightWingMin){
+            RightWing.move_velocity(myMath.toRPM(true, rightWingSpeed, RightWing.get_gearing()));
+        } else {
+            RightWing.move_velocity(0);
+        }
+        
     }
 
     void lockLeft()

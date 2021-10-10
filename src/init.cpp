@@ -991,6 +991,8 @@ void initialize()
     initAllScreens();
     //calibrate potentiometer if used
     liftPot.calibrate();
+    leftWingPot.calibrate();
+    rightWingPot.calibrate();
     //printf("Init pot \n");
     //delay(250); idk about this delay
     //locks

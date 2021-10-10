@@ -105,7 +105,12 @@ void opcontrol()
             //dont spin wing wheel left
             Bongo.Wings.stopLeft();
         }
-
+        //mogo line up
+        if(master.get_digital(DIGITAL_A)){
+            Bongo.lineUpMogo(LeftSideNum);
+        } else if(master.get_digital(DIGITAL_Y)){
+            Bongo.lineUpMogo(RightSideNum);
+        }
 
         // starts the spin on motors or cuts power
         Bongo.Movement.move();

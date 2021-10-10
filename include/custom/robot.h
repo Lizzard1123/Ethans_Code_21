@@ -29,14 +29,14 @@ private:
 
     //tower PID vars
     // neg right pos left angle
-    double mt_offset = -25;
+    double mt_offset = 158;
     double mt_error;
     double mt_targetCX;
     double mt_CX;
     double mt_width;
     double mt_error_past = 0;
-    double mt_Dval = 2;
-    double mt_Pval = .3;
+    double mt_Dval = 0;
+    double mt_Pval = .2;
     double mt_widthLimit = 20;
 
     double t_tolerance = .5;

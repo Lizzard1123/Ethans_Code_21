@@ -7,11 +7,11 @@
 #define BLPort 19
 #define BRPort 12 
 #define LeftWingPort 8
-#define RightWingPort 99 //TODO assign port
+#define RightWingPort 13 //TODO assign port
 #define YarmPort 9
 #define XarmPort 10
-#define leftEyePort 99 //TODO assign port
-#define rightEyePort 99 //TODO assign port
+#define leftEyePort 7 //TODO assign port
+#define rightEyePort 1 //TODO assign port
 #define backEyePort 99 //TODO assign port
 //other defines
 #define LeftSideNum 0
@@ -53,6 +53,8 @@ extern vision_signature_s_t MOGO_CUSTOM_YELLOW;
 
 //pots
 extern ADIAnalogIn liftPot;
+extern ADIAnalogIn leftWingPot;
+extern ADIAnalogIn rightWingPot;
 
 //LED
 //extern ADIDigitalOut led;

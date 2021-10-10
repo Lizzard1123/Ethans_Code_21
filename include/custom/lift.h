@@ -127,16 +127,18 @@ public:
         if(Xfirst){
             if(!PIDMoveXarm(X)){ // if Xarm isnt in the right spot return false
                 return false;
+            } else {
+                PIDMoveXarm(X);
             }
-            PIDMoveXarm(X);
             if(PIDMoveYarm(Y)){ // if Y arm is in right spot return true
                 return true;
             }
         } else {
             if(!PIDMoveYarm(Y)){ // if Xarm isnt in the right spot return false
                 return false;
+            } else {
+                PIDMoveYarm(Y); // idle keep arm in place while other moves
             }
-            PIDMoveYarm(Y); // idle keep arm in place while other moves
             if(PIDMoveXarm(X)){ // if Y arm is in right spot return true
                 return true;
             }
