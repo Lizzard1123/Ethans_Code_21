@@ -391,10 +391,11 @@ public:
     {
         //I derived the original formula and for the reiteration and added wheel i combined it with work done here
         //https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-186-mobile-autonomous-systems-laboratory-january-iap-2005/study-materials/odomtutorial.pdf
-        double wheelCircumfrence = 10.11;
-        double wheelSmallCircumfrence = 8.65795;
+        double wheelCircumfrence = 10.21;
+        double wheelSmallCircumfrence = 8.64;
         //bigger increases angle more
-        double wheelSeperation = 9.48; //9.2
+        double wheelSeperation = 4.6 * 2; //4.4
+        double wheelOffset = 5.5;
         double head = rotation;
         double rightOdomVal;
         double leftOdomVal;
@@ -413,11 +414,13 @@ public:
             
             
             //find isolated forward and sideways movement
-            double forwardMovement = (rightOdom.get() + leftOdom.get()) / 2;
-            double sidewaysMovement = middleOdom.get();
+            double leftDist = myMath.toInch(leftOdom.get(), wheelCircumfrence);
+            double rightDist = myMath.toInch(rightOdom.get(), wheelCircumfrence);
+            double forwardMovement = (rightDist + leftDist) / 2;
+            double sidewaysMovement = myMath.toInch(middleOdom.get(), wheelSmallCircumfrence);
+            double changeOfHeading = ((leftDist - rightDist) / wheelSeperation) * 180 / M_PI;
             //to distance
-            forwardMovement = myMath.toInch(forwardMovement, wheelCircumfrence);
-            sidewaysMovement = myMath.toInch(sidewaysMovement, wheelSmallCircumfrence);
+            sidewaysMovement += wheelOffset * (changeOfHeading  * M_PI / 180);
 
             // forward wheels in relation to coordinates
             //HEY YOU
@@ -429,14 +432,24 @@ public:
             Y -= sidewaysMovement * sin(head * M_PI / 180);
             X += sidewaysMovement * cos(head * M_PI / 180);
             //heading//update heading part
-            double changeOfHeading = (leftOdom.get() - rightOdom.get()) / wheelSeperation;
+            
             rotation += changeOfHeading;
             //set new
             //TODO i thought this went before but try accuracy when its after computed distance moved idk i think its right
             head = rotation;
             //debug
-            printf("right: %f", rightOdom.get());
-            printf("left: %f", leftOdom.get());
+            printf("right: %f\n", rightDist);
+            printf("left: %f\n", leftDist);
+            printf("heading %f\n", head);
+            printf("Rotation %f\n", rotation);
+            printf("Current X %f\n", X);
+            printf("Current Y %f\n", Y);
+            printf("forward movement %f\n", forwardMovement);
+            printf("\n");
+            printf("heading change %f\n", changeOfHeading);
+            printf("sideways movement %f \n", sidewaysMovement);
+            printf("Back wheel rotation %f\n", myMath.toInch(sidewaysMovement, wheelSmallCircumfrence));
+            printf("\n");
             // reset
             rightOdom.reset();
             leftOdom.reset();
@@ -451,9 +464,14 @@ public:
         PIDTurn(0);
     }
 
+    void testOdom3(){
+        //PIDTurn(360);
+        PIDMoveTurn(0, 72, 0, 100);
+    }
+
     void testOdom2()
     {
-        PIDMoveTurn(0, 0, 0, 50);
+        PIDMoveTurn(72, 0, 0, 100);
     }
 
     // set current position of bongo
@@ -579,8 +597,8 @@ public:
         Task controlRumble(updateControllerRumble, nullptr, TASK_PRIORITY_DEFAULT,
                      TASK_STACK_DEPTH_DEFAULT, "control controller rumble");
         // track locationFty
-        //Task updatePosition(updatePos, nullptr, TASK_PRIORITY_DEFAULT,
-        //                    TASK_STACK_DEPTH_DEFAULT, "updatePos");
+        Task updatePosition(updatePos, nullptr, TASK_PRIORITY_DEFAULT,
+                            TASK_STACK_DEPTH_DEFAULT, "updatePos");
         initz = true;
     }
 

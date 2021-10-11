@@ -42,6 +42,15 @@ void opcontrol()
             Bongo.Wings.lockRight();
         }
 
+        //odom testers
+        if(master.get_digital(DIGITAL_B)){
+            Bongo.testOdom3();
+        } else if (master.get_digital(DIGITAL_X)){
+            Bongo.testOdom();
+        } else if(master.get_digital(DIGITAL_Y)){
+            Bongo.testOdom2();
+        }
+
         //lift controller updaters
         Bongo.Lift.setJoystickX(partner.get_analog(E_CONTROLLER_ANALOG_LEFT_X));
         Bongo.Lift.setJoystickY(partner.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y));

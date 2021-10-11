@@ -47,15 +47,15 @@ ADIDigitalOut ringLock (ringLockPort);
 //ADIDigitalIn tailSensor(tailSensorPort);
 
 //pots
-ADIAnalogIn liftPot('b');
-ADIAnalogIn leftWingPot('a');
-ADIAnalogIn rightWingPot('h');
+ADIAnalogIn liftPot({{expanderPort, 'a'}});
+ADIAnalogIn leftWingPot({{expanderPort, 'b'}});
+ADIAnalogIn rightWingPot({{expanderPort, 'c'}});
 
 // Odom 
 //TODO put odom back 
-//okapi::ADIEncoder  leftOdom('a', 'b', true);
-//okapi::ADIEncoder  rightOdom('g', 'h', false);
-//okapi::ADIEncoder  middleOdom('e', 'f', true);
+okapi::ADIEncoder  leftOdom('e', 'f', true);
+okapi::ADIEncoder  rightOdom('g', 'h', false);
+okapi::ADIEncoder  middleOdom('a', 'b', true);
 
 // Staic defines
 RobotMovement Robot::Movement;
