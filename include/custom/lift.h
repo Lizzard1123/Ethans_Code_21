@@ -12,6 +12,7 @@ private:
     bool bigTowerIsOnLeft = true;
     bool manualControl = false;
     bool turnOffManualControl = false;
+    bool reachedHalfDrop = false;
     //update bools
     bool autonLoadRings;
     bool autonUserDrop;
@@ -124,22 +125,31 @@ public:
     
     bool goToPoint(double X, double Y, bool Xfirst){
         printf("going to point: %f, %f\n", X, Y);
+        if(emergencyStop){
+            stopAll();
+            return true;
+        }
+        //half drop prevents it from blocking second pid update if the first stage has been reached but is out of place
         if(Xfirst){
-            if(!PIDMoveXarm(X)){ // if Xarm isnt in the right spot return false
+            if(!PIDMoveXarm(X) && !reachedHalfDrop){ // if Xarm isnt in the right spot return false
                 return false;
             } else {
+                reachedHalfDrop = true;
                 PIDMoveXarm(X);
             }
             if(PIDMoveYarm(Y)){ // if Y arm is in right spot return true
+                reachedHalfDrop = false;
                 return true;
             }
         } else {
-            if(!PIDMoveYarm(Y)){ // if Xarm isnt in the right spot return false
+            if(!PIDMoveYarm(Y) && !reachedHalfDrop){ // if Xarm isnt in the right spot return false
                 return false;
             } else {
+                reachedHalfDrop = true;
                 PIDMoveYarm(Y); // idle keep arm in place while other moves
             }
             if(PIDMoveXarm(X)){ // if Y arm is in right spot return true
+                reachedHalfDrop = false;
                 return true;
             }
         }
@@ -203,6 +213,10 @@ public:
 
     void confirmationSequence(){
         while(!confirmState){
+            if(emergencyStop){
+                stopAll();
+                break;
+            }
             Xarm.move_velocity(myMath.toRPM(false, currentJoystickX / tweakSpeedDial, Xarm.get_gearing()));
             Yarm.move_velocity(myMath.toRPM(false, currentJoystickY / tweakSpeedDial, Yarm.get_gearing()));
             delay(PIDdelay);
@@ -218,6 +232,9 @@ public:
         while(!goToPoint(Xcoord, Ycoord, false) && !emergencyStop){
             printf("going to point\n");
             delay(PIDdelay);
+        }
+        if(emergencyStop){
+            stopAll();
         }
         confirmState = false; //just in case you hit it before the confirm it would break
         promptConfirm = true;
@@ -346,6 +363,7 @@ public:
         //partner.clear();
         //partner.set_text(0,0,"hi");
         if(emergencyStop){
+            stopAll();
             partner.clear();
             delay(55);
             partner.set_text(1,4,"Emergency Stop");

@@ -47,8 +47,8 @@ ADIDigitalOut ringLock (ringLockPort);
 //ADIDigitalIn tailSensor(tailSensorPort);
 
 //pots
-ADIAnalogIn liftPot({{expanderPort, 'a'}});
-ADIAnalogIn leftWingPot({{expanderPort, 'b'}});
+ADIAnalogIn liftPot('c');
+ADIAnalogIn leftWingPot('d');
 ADIAnalogIn rightWingPot({{expanderPort, 'c'}});
 
 // Odom 
