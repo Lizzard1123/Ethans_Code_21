@@ -3,7 +3,6 @@
 #include "wings.h"
 #include "lift.h"
 #include "movement.h"
-#include "auton.h"
 #include <climits>
 
 class Robot
@@ -56,8 +55,6 @@ public:
     static LiftClass Lift;
     // class handler for movement + other funtions
     static RobotMovement Movement;
-    //Auton funtions
-    AutonMaker Auton;
     // custom math reference
     static Math myMath;
 
@@ -118,7 +115,7 @@ public:
     }
 
     void autonomous(){
-        Auton.Autonomous(autonCodeNum, left, teamIsBlue);
+        Autonomous(autonCodeNum = 1, left = true, teamIsBlue = true);
     }
 
     void catieControl(){
@@ -176,15 +173,15 @@ public:
             FRAuton = (FRAuton / under);
             BLAuton = (BLAuton / under);
             BRAuton = (BRAuton / under);
-            printf("FLAuton %f \n", FLAuton);
-            printf("FRAuton %f \n", FRAuton);
-            printf("BLAuton %f \n", BLAuton);
-            printf("BRAuton %f  \n", BRAuton);
-            printf("rotation %f  \n", rotation);
-            printf("Dangle %f \n", Dangle);
-            printf("error %f \n", error);
-            printf("X:  %f \n", X);
-            printf("Y:  %f \n", Y);
+            //printf("FLAuton %f \n", FLAuton);
+            //printf("FRAuton %f \n", FRAuton);
+            //printf("BLAuton %f \n", BLAuton);
+            //printf("BRAuton %f  \n", BRAuton);
+            //printf("rotation %f  \n", rotation);
+            //printf("Dangle %f \n", Dangle);
+            //printf("error %f \n", error);
+            //printf("X:  %f \n", X);
+            //printf("Y:  %f \n", Y);
             // Drive Bongo
             Movement.moveFL(myMath.maxSpeed(FLAuton, maxspeed));
             Movement.moveFR(myMath.maxSpeed(FRAuton, maxspeed));
@@ -332,10 +329,10 @@ public:
             FRAuton = (FRAuton / under);
             BLAuton = (BLAuton / under);
             BRAuton = (BRAuton / under);
-            printf("FLAuton %f \n", FLAuton);
-            printf("FRAuton %f \n", FRAuton);
-            printf("BLAuton %f \n", BLAuton);
-            printf("BRAuton %f  \n", BRAuton);
+            //printf("FLAuton %f \n", FLAuton);
+            //printf("FRAuton %f \n", FRAuton);
+            //printf("BLAuton %f \n", BLAuton);
+            //printf("BRAuton %f  \n", BRAuton);
             printf("Heading: %f", rotation);
             printf("Dangle %f \n", Dangle);
             printf("target %f \n", target);
@@ -438,18 +435,18 @@ public:
             //TODO i thought this went before but try accuracy when its after computed distance moved idk i think its right
             head = rotation;
             //debug
-            printf("right: %f\n", rightDist);
-            printf("left: %f\n", leftDist);
-            printf("heading %f\n", head);
-            printf("Rotation %f\n", rotation);
-            printf("Current X %f\n", X);
-            printf("Current Y %f\n", Y);
-            printf("forward movement %f\n", forwardMovement);
-            printf("\n");
-            printf("heading change %f\n", changeOfHeading);
-            printf("sideways movement %f \n", sidewaysMovement);
-            printf("Back wheel rotation %f\n", myMath.toInch(sidewaysMovement, wheelSmallCircumfrence));
-            printf("\n");
+            //printf("right: %f\n", rightDist);
+            //printf("left: %f\n", leftDist);
+            //printf("heading %f\n", head);
+            //printf("Rotation %f\n", rotation);
+            //printf("Current X %f\n", X);
+            //printf("Current Y %f\n", Y);
+            //printf("forward movement %f\n", forwardMovement);
+            //printf("\n");
+            //printf("heading change %f\n", changeOfHeading);
+            //printf("sideways movement %f \n", sidewaysMovement);
+            //printf("Back wheel rotation %f\n", myMath.toInch(sidewaysMovement, wheelSmallCircumfrence));
+            //printf("\n");
             // reset
             rightOdom.reset();
             leftOdom.reset();
@@ -479,6 +476,10 @@ public:
     {
         X = x;
         Y = y;
+    }
+
+    void setRotation(double r){
+        rotation = r;
     }
 
     // prints to debug screen current position of bongo
@@ -645,6 +646,95 @@ public:
             mt_error_past = mt_error;
         }
         return mt_error;
+    }
+
+    static void updateWingsAuton(void *)
+    {
+        int time = 4;
+        int total = 500;
+        int iterationTime = time/total;
+        Wings.tiltRightWingMax(false);
+        c::task_delay(1000); //away from wall facing left -90
+        for(int i = 0; i < total; i++){
+            //update subsystem motors in their methods respectivley 
+            Wings.update();
+            c::task_delay(iterationTime);
+        }
+        Wings.stopAll();
+    } 
+
+    static void updateWingsAuton2(void *)
+    {
+        int time = 4;
+        int total = 500;
+        int iterationTime = time/total;
+        Wings.tiltRightWingMax(true);
+        Wings.tiltLeftWingMax(true);
+        for(int i = 0; i < total; i++){
+            //update subsystem motors in their methods respectivley 
+            Wings.update();
+            c::task_delay(iterationTime);
+        }
+        Wings.stopAll();
+    } 
+
+    static void updateLiftAuton(void *)
+    {
+        Lift.goToIdleAuton(false);
+    }
+
+    //AUTONS
+
+    void AutonomousOne(bool isLeft, bool isBlue){
+        //go to side tower
+        rotation = -90;
+        setPos(108, 15);
+        // lower arms
+        Task controlAutonWings(updateWingsAuton, nullptr, TASK_PRIORITY_DEFAULT,
+                     TASK_STACK_DEPTH_DEFAULT, "control auton wings"); //Lift.goToIdleAuton(false);
+        Task controlAutonLift(updateLiftAuton, nullptr, TASK_PRIORITY_DEFAULT,
+                     TASK_STACK_DEPTH_DEFAULT, "control auton lift");
+        PIDMoveTurn(108, 60, -90, 40);// go to side netrual
+        Wings.lockRightWing(); //lock side neutral
+        //turn to the middle tower
+        Task controlAutonWings2(updateWingsAuton2, nullptr, TASK_PRIORITY_DEFAULT,
+                     TASK_STACK_DEPTH_DEFAULT, "control auton wings2");
+        PIDTurn(10);
+        PIDMoveTurn(82, 65, 10, 25);// go to middle netrual
+        Wings.lockLeftWing();
+        PIDTurn(-45);
+        PIDMoveTurn(108, 15, -45, 25);
+
+    };
+    void AutonomousTwo(bool isLeft, bool isBlue){
+        //TODO finish this auton pathing
+    };
+    void AutonomousThree(bool isLeft, bool isBlue){
+        //TODO finish this auton pathing
+    };
+    void AutonomousFour(bool isLeft, bool isBlue){
+        //TODO finish this auton pathing
+    };
+
+    void Autonomous(int num, bool isLeft, bool isBlue)
+    {
+        switch (num)
+        {
+        case 1:
+            AutonomousOne(isLeft, isBlue);
+            break;
+
+        case 2:
+            AutonomousTwo(isLeft, isBlue);
+            break;
+
+        case 3:
+            AutonomousThree(isLeft, isBlue);
+            break;
+        case 4:
+            AutonomousFour(isLeft, isBlue);
+            break;
+        }
     }
 };
 

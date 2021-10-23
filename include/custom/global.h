@@ -7,20 +7,23 @@
 #define BLPort 19
 #define BRPort 12 
 #define LeftWingPort 8
-#define RightWingPort 13 //TODO assign port
+#define RightWingPort 13 
 #define YarmPort 9
 #define XarmPort 10
-#define leftEyePort 7 //TODO assign port
-#define rightEyePort 1 //TODO assign port
-#define backEyePort 99 //TODO assign port
+#define leftEyePort 7 
+#define rightEyePort 1 
+#define backEyePort 99 
 //other defines
 #define LeftSideNum 0
 #define RightSideNum 1
 #define BackSideNum 2
-#define expanderPort 99 //TODO assign port
-#define leftLockPort 'f'
-#define rightLockPort 99 //TODO assign port
-#define ringLockPort 'g'
+#define expanderPort 15 
+#define leftLockPort {{expanderPort, 'c'}} // e is left wing lock
+#define rightLockPort {{expanderPort, 'h'}} 
+#define ringLockPort {{expanderPort, 'g'}}
+#define leftWingLock {{expanderPort, 'e'}}
+#define rightWingLock {{expanderPort, 'f'}}
+
 
 //motors
 extern Motor FL;
@@ -61,6 +64,9 @@ extern ADIAnalogIn rightWingPot;
 extern ADIDigitalOut leftLock;
 extern ADIDigitalOut rightLock;
 extern ADIDigitalOut ringLock;
+extern ADIDigitalOut leftLockWing;
+extern ADIDigitalOut rightLockWing;
+
 
 //limit switch / button
 //extern ADIDigitalIn tailSensor;

@@ -41,18 +41,18 @@ private:
     double Ytotal = 0;
     double Ytolerance = 5;
     //Points
-    double XidleTop = 973;
-    double XidleBottom = 0;
-    double Yidle = 2190;
-    double Xrings = 0;
-    double Yrings = 1107;
+    double XidleTop = 0;
+    double XidleBottom = -902;
+    double Yidle = 1338; //2190
+    double Xrings = XidleBottom;
+    double Yrings = 2435; //1107
     //Drops
-    double Xleft = 934;
-    double Xright = 879;
-    double Ytall = 2375;
-    double Ymed = 2300;
-    double XmedLeft = -258; //pos is right
-    double XmedRight = 258;
+    double Xleft = 53; //934
+    double Xright = -53; //879
+    double Ytall = 1241; //2375
+    double Ymed = 1980; //2300
+    double XmedLeft = 176; // -258//pos is right
+    double XmedRight = -176; //258
     double Ysmall = 1958;
 public:
     Math myMath;
@@ -109,7 +109,7 @@ public:
 
         //Spin motor
         printf("spinning Y at %f\n", speed);
-        Yarm.move_velocity(myMath.toRPM(true, speed, Yarm.get_gearing()));
+        Yarm.move_velocity(myMath.toRPM(false, speed, Yarm.get_gearing()));
 
         //check if its there
         printf("Yerror: %f", fabs(Yerror));
@@ -173,11 +173,11 @@ public:
 
     void loadRingsSequence(){
         goToIdleAuton(false);
-        ringLock.set_value(HIGH);
+        ringLock.set_value(LOW);
         while(!goToRings() && !emergencyStop){
             delay(PIDdelay);
         }
-        ringLock.set_value(LOW);
+        ringLock.set_value(HIGH);
         goToIdleAuton(false);
     }
 
@@ -217,7 +217,7 @@ public:
                 stopAll();
                 break;
             }
-            Xarm.move_velocity(myMath.toRPM(false, currentJoystickX / tweakSpeedDial, Xarm.get_gearing()));
+            Xarm.move_velocity(myMath.toRPM(true, currentJoystickX / (tweakSpeedDial*4), Xarm.get_gearing()));
             Yarm.move_velocity(myMath.toRPM(false, currentJoystickY / tweakSpeedDial, Yarm.get_gearing()));
             delay(PIDdelay);
         }
@@ -229,7 +229,11 @@ public:
         printf("Is idled\n");
         double Xcoord = getXCoord(autonUserDropLevel, autonUserDropSideLeft);
         double Ycoord = getLevelCoord(autonUserDropLevel);
-        while(!goToPoint(Xcoord, Ycoord, false) && !emergencyStop){
+        bool xfirst = true;
+        if(Ycoord == Ytall){
+            xfirst = false;
+        }
+        while(!goToPoint(Xcoord, Ycoord, xfirst) && !emergencyStop){
             printf("going to point\n");
             delay(PIDdelay);
         }
@@ -242,7 +246,7 @@ public:
         delay(1001);
         promptConfirm = false;
         confirmState = false;
-        goToIdleAuton(true);
+        goToIdleAuton(!xfirst);
     }
 
     void update()
@@ -284,7 +288,7 @@ public:
     //other important ones
 
     void confirmDrop(){ // TODO setup piston unlock here
-        ringLock.set_value(HIGH);
+        ringLock.set_value(LOW);
         confirmState = true;
     }
 

@@ -41,6 +41,8 @@ vision::signature SIG_1 (1, 189, 1879, 1034, -3857, -2845, -3352, 0.700, 0);
 ADIDigitalOut leftLock (leftLockPort);
 ADIDigitalOut rightLock (rightLockPort);
 ADIDigitalOut ringLock (ringLockPort);
+ADIDigitalOut leftLockWing (leftLockPort);
+ADIDigitalOut rightLockWing (rightLockPort);
 
 
 //button / limit switch
@@ -49,13 +51,13 @@ ADIDigitalOut ringLock (ringLockPort);
 //pots
 ADIAnalogIn liftPot('c');
 ADIAnalogIn leftWingPot('d');
-ADIAnalogIn rightWingPot({{expanderPort, 'c'}});
+ADIAnalogIn rightWingPot({{expanderPort, 'f'}});
 
 // Odom 
 //TODO put odom back 
-okapi::ADIEncoder  leftOdom('e', 'f', true);
+okapi::ADIEncoder  leftOdom('e', 'f', false);
 okapi::ADIEncoder  rightOdom('g', 'h', false);
-okapi::ADIEncoder  middleOdom('a', 'b', true);
+okapi::ADIEncoder  middleOdom('a', 'b', false);
 
 // Staic defines
 RobotMovement Robot::Movement;

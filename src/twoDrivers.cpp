@@ -29,12 +29,17 @@ void opcontrol()
         //Bongo.catieControl();
         //testing for arm pos
         //if(master.get_digital(DIGITAL_Y)){
-        //    Xarm.move_velocity(10);
+        //    Xarm.move_velocity(5);
         //} else if(master.get_digital(DIGITAL_A)){
-        //    Xarm.move_velocity(-10);
+        //    Xarm.move_velocity(-5);
         //} else {
         //    Bongo.Lift.stopXarm();
         //}
+        if(master.get_digital(DIGITAL_Y)){
+            Bongo.setPos(0,0);
+            Bongo.setRotation(-90);
+            Bongo.autonomous();
+        }
         //locks
         if(master.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
             Bongo.Wings.lockLeft();
@@ -43,13 +48,13 @@ void opcontrol()
         }
 
         //odom testers
-        if(master.get_digital(DIGITAL_B)){
-            Bongo.testOdom3();
-        } else if (master.get_digital(DIGITAL_X)){
-            Bongo.testOdom();
-        } else if(master.get_digital(DIGITAL_Y)){
-            Bongo.testOdom2();
-        }
+       //if(master.get_digital(DIGITAL_B)){
+       //    Bongo.testOdom3();
+       //} else if (master.get_digital(DIGITAL_X)){
+       //    Bongo.testOdom();
+       //} else if(master.get_digital(DIGITAL_Y)){
+       //    Bongo.testOdom2();
+       //}
 
         //lift controller updaters
         Bongo.Lift.setJoystickX(partner.get_analog(E_CONTROLLER_ANALOG_LEFT_X));
